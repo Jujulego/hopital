@@ -1,4 +1,4 @@
-package jdbcv2018;
+package hopital.connexion;
 
 import com.jcraft.jsch.*;
 
@@ -10,7 +10,7 @@ import com.jcraft.jsch.*;
  * @author pieraggi
  */
 public class SSHTunnel {
-
+    // Attributs
     private String firstHost = "gandalf.ece.fr";
     private String secondHost = "sql-users.ece.fr";
     private int firstHostPort = 22;
@@ -35,10 +35,10 @@ public class SSHTunnel {
     public SSHTunnel(String username, String password, String firstHost, String secondHost, int firstHostPort, int secondHostPort) {
         this.username = username;
         this.password = password;
-        this.setFirstHost(firstHost);
-        this.setSecondHost(secondHost);
-        this.setFirstHostPort(firstHostPort);
-        this.setSecondHostPort(secondHostPort);
+        setFirstHost(firstHost);
+        setSecondHost(secondHost);
+        setFirstHostPort(firstHostPort);
+        setSecondHostPort(secondHostPort);
     }
 
     /**
@@ -59,30 +59,26 @@ public class SSHTunnel {
     /**
      * Tente de se connecter au serveur
      *
-     * @return TRUE si la connexion réussie, FALSE sinon
+     * @return la session de connexion
+     *
+     * @throws JSchException en cas d'erreur de connexion
      */
     @SuppressWarnings("CallToThreadDumpStack")
-    public boolean connect() {
+    public Session connect() throws JSchException {
+        // Initialise la connexion
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(this.getUsername(), this.getFirstHost(), this.getFirstHostPort());
+        // Automatiser la connexion (ne pas afficher d'interface pour rentrer les mots de passe)
+        session.setUserInfo(new SilentUserInfo(this.password));
 
-        try {
-            // Initialise la connexion
-            JSch jsch = new JSch();
-            Session session = jsch.getSession(this.getUsername(), this.getFirstHost(), this.getFirstHostPort());
-            // Automatiser la connexion (ne pas afficher d'interface pour rentrer les mots de passe)
-            session.setUserInfo(new SilentUserInfo(this.password));
+        // Etablissement du premier tunnel SSH
+        session.connect();
 
-            // Etablissement du premier tunnel SSH
-            session.connect();
+        // Etablissement du second tunnel SSH (port forwarding with option -L)
+        session.setPortForwardingL(this.getSecondHostPort(), this.getSecondHost(), this.getSecondHostPort());
+        //System.out.println("SSH connexion successful : localhost -> "+this.getFirstHost()+":"+this.getFirstHostPort()+" -> "+" "+port+":"+this.getSecondHost()+":"+this.getSecondHostPort());
 
-            // Etablissement du second tunnel SSH (port forwarding with option -L)
-            session.setPortForwardingL(this.getSecondHostPort(), this.getSecondHost(), this.getSecondHostPort());
-            //System.out.println("SSH connexion successful : localhost -> "+this.getFirstHost()+":"+this.getFirstHostPort()+" -> "+" "+port+":"+this.getSecondHost()+":"+this.getSecondHostPort());
-            return true;
-        } catch (JSchException e) {
-            System.out.println("Problème SSH");
-        }
-
-        return false;
+        return session;
     }
 
     /* ************************

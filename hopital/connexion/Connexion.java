@@ -10,12 +10,12 @@ import java.util.ArrayList;
  * 
  * Connexion a votre BDD locale ou à distance sur le serveur de l'ECE via le tunnel SSH
  * 
- * @author segado
+ * @author segado julien
  */
 public class Connexion {
     // Attributs
     private Connection conn; // connexion à la base
-    private Session sessionSSH = null;
+    private SSHTunnel sshTunnel = null;
 
     /**
      * Connexion à la base de données locale
@@ -54,9 +54,8 @@ public class Connexion {
         Class.forName("com.mysql.jdbc.Driver");
 
         // Connexion via le tunnel SSH avec le username et le password ECE
-        SSHTunnel ssh = new SSHTunnel(usernameECE, passwordECE);
-        sessionSSH = ssh.connect();
-        System.out.println("Connexion reussie !!!");
+        sshTunnel = new SSHTunnel(usernameECE, passwordECE);
+        sshTunnel.connect();
 
         //création d'une connexion JDBC à la base
         conn = DriverManager.getConnection(
@@ -127,13 +126,13 @@ public class Connexion {
      *
      * @throws java.sql.SQLException erreur d'accès à la base
      */
-    public void deconnecter() throws SQLException {
+    public void deconnecter() throws SQLException, JSchException {
         // Deconnexion de la base
         conn.close();
 
         // Deconnexion SSH
-        if (sessionSSH != null) {
-            sessionSSH.disconnect();
+        if (sshTunnel != null) {
+            sshTunnel.deconnecter();
         }
     }
 }

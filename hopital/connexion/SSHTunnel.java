@@ -11,12 +11,14 @@ import com.jcraft.jsch.*;
  */
 public class SSHTunnel {
     // Attributs
-    private String firstHost = "gandalf.ece.fr";
-    private String secondHost = "sql-users.ece.fr";
-    private int firstHostPort = 22;
-    private int secondHostPort = 3305;
+    private String tunnelHost = "gandalf.ece.fr";
+    private String host = "sql-users.ece.fr";
+    private int tunnelHostPort = 22;
+    private int hostPort = 3305;
     private String username;
     private String password;
+
+    private Session session;
 
     /* ************************
      *       Constructors     *
@@ -27,18 +29,20 @@ public class SSHTunnel {
      *
      * @param username Nom d'utilisateur ECE
      * @param password Mot de passe ECE
-     * @param firstHost Premier hôte avec lequel il faut établir un tunnel SSH
-     * @param secondHost Second hôte avec lequel il faut établir un tunnel SSH
-     * @param firstHostPort Port utiliser pour se connecter au premier hôte
-     * @param secondHostPort Port utiliser pour se connecter au second hôte
+     * @param tunnelHost Hote porteur du tunnel
+     * @param host Second hôte avec lequel il faut établir un tunnel SSH
+     * @param tunnelHostPort Port utiliser pour se connecter au premier hôte
+     * @param hostPort Port utiliser pour se connecter au second hôte
      */
-    public SSHTunnel(String username, String password, String firstHost, String secondHost, int firstHostPort, int secondHostPort) {
+    public SSHTunnel(String username, String password, String tunnelHost, String host, int tunnelHostPort, int hostPort) {
         this.username = username;
         this.password = password;
-        setFirstHost(firstHost);
-        setSecondHost(secondHost);
-        setFirstHostPort(firstHostPort);
-        setSecondHostPort(secondHostPort);
+
+        setTunnelHost(tunnelHost);
+        setTunnelHostPort(tunnelHostPort);
+
+        setHost(host);
+        setHostPort(hostPort);
     }
 
     /**
@@ -67,7 +71,8 @@ public class SSHTunnel {
     public Session connect() throws JSchException {
         // Initialise la connexion
         JSch jsch = new JSch();
-        Session session = jsch.getSession(this.getUsername(), this.getFirstHost(), this.getFirstHostPort());
+        session = jsch.getSession(this.getUsername(), this.getTunnelHost(), this.getTunnelHostPort());
+
         // Automatiser la connexion (ne pas afficher d'interface pour rentrer les mots de passe)
         session.setUserInfo(new SilentUserInfo(this.password));
 
@@ -75,45 +80,52 @@ public class SSHTunnel {
         session.connect();
 
         // Etablissement du second tunnel SSH (port forwarding with option -L)
-        session.setPortForwardingL(this.getSecondHostPort(), this.getSecondHost(), this.getSecondHostPort());
-        //System.out.println("SSH connexion successful : localhost -> "+this.getFirstHost()+":"+this.getFirstHostPort()+" -> "+" "+port+":"+this.getSecondHost()+":"+this.getSecondHostPort());
+        session.setPortForwardingL(this.getHostPort(), this.getHost(), this.getHostPort());
 
         return session;
+    }
+
+    /**
+     * Déconnexion !
+     */
+    public void deconnecter() throws JSchException {
+        session.setPortForwardingL(this.getHostPort(), this.getHost(), this.getHostPort());
+        session.disconnect();
     }
 
     /* ************************
      *    Getters & Setters   *
      ************************ */
-    public String getFirstHost() {
-        return firstHost;
+    public String getTunnelHost() {
+        return tunnelHost;
     }
 
-    private void setFirstHost(String firstHost) {
-        this.firstHost = firstHost;
+    private void setTunnelHost(String tunnelHost) {
+        this.tunnelHost = tunnelHost;
     }
 
-    public String getSecondHost() {
-        return secondHost;
+    public String getHost() {
+        return host;
     }
 
-    private void setSecondHost(String secondHost) {
-        this.secondHost = secondHost;
+    private void setHost(String host) {
+        this.host = host;
     }
 
-    public int getFirstHostPort() {
-        return firstHostPort;
+    public int getTunnelHostPort() {
+        return tunnelHostPort;
     }
 
-    private void setFirstHostPort(int firstHostPort) {
-        this.firstHostPort = firstHostPort;
+    private void setTunnelHostPort(int tunnelHostPort) {
+        this.tunnelHostPort = tunnelHostPort;
     }
 
-    public int getSecondHostPort() {
-        return secondHostPort;
+    public int getHostPort() {
+        return hostPort;
     }
 
-    private void setSecondHostPort(int secondHostPort) {
-        this.secondHostPort = secondHostPort;
+    private void setHostPort(int hostPort) {
+        this.hostPort = hostPort;
     }
 
     public String getUsername() {

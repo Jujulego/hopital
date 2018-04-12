@@ -2,13 +2,15 @@ package hopital.graphismes;
 
 import com.jcraft.jsch.JSchException;
 import hopital.connexion.Connexion;
+import hopital.connexion.ConnexionThread;
 
 import javax.swing.*;
 import java.sql.SQLException;
 
-public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListener {
+public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListener, ConnexionThread.ConnexionListener {
     // Attrinuts
     ConnexionECEDialog connexionDialog = new ConnexionECEDialog();
+    ConnexionThread connexionThread;
     Connexion connexion;
 
     // Constructeur
@@ -25,29 +27,32 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     // Méthodes
     @Override
     public void connexionECE(String utilisateur, char[] motDePasse) {
-        try {
-            connexion = new Connexion(
-                    utilisateur, new String(motDePasse),
-                    "jc151870", ""
-            );
-            connexionDialog.setVisible(false);
-        } catch (JSchException | SQLException | ClassNotFoundException e) {
-            connexionDialog.setMessage("Erreur de connexion !!!");
-            e.printStackTrace();
-        }
+        connexionThread = new ConnexionThread(
+                utilisateur, new String(motDePasse),
+                "jc151870", ""
+        );
+        connexionThread.ajouterConnexionListener(this);
+        connexionThread.start();
     }
 
     @Override
     public void connexionLocale() {
-        try {
-            connexion = new Connexion(
-                    "hopital",
-                    "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57"
-            );
-            connexionDialog.setVisible(false);
-        } catch (SQLException | ClassNotFoundException e) {
-            connexionDialog.setMessage("Erreur de connexion !!!");
-            e.printStackTrace();
-        }
+        connexionThread = new ConnexionThread(
+                "hopital",
+                "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57"
+        );
+        connexionThread.ajouterConnexionListener(this);
+        connexionThread.start();
+    }
+
+    @Override
+    public void connexionReussie(Connexion connexion) {
+        this.connexion = connexion;
+        connexionDialog.setVisible(false);
+    }
+
+    @Override
+    public void connexionEchouee() {
+        connexionDialog.setMessage("Erreur de connexion !!!");
     }
 }

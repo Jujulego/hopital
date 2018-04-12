@@ -21,7 +21,7 @@ public class ConnexionECEDialog extends JDialog {
     public ConnexionECEDialog() {
         // Paramètres
         setSize(300, 196);
-        setResizable(false);
+        //setResizable(false);
         setTitle("Connexion à l'ECE");
         setLayout(new FlowLayout(FlowLayout.CENTER, 16, 16));
 
@@ -44,6 +44,15 @@ public class ConnexionECEDialog extends JDialog {
         boutons.add(btnLocale);
         boutons.add(btnConnexion);
         add(boutons);
+
+        //Ben caca
+        JButton option1=new JButton("Option1");
+        JButton option2=new JButton("Option2");
+        JPanel ben=new JPanel();
+        ben.setLayout(new FlowLayout(FlowLayout.CENTER, 8, 8));
+        ben.add(option1);
+        ben.add(option2);
+        add(ben);
 
         // Evenements
         DocumentListener documentListener = new DocumentListener() {

@@ -63,7 +63,7 @@ public class Hospitalisation {
     /**
      * Récupère tous les hospitalisations !
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */

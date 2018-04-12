@@ -25,7 +25,7 @@ public class Malade {
      * Récupère un malade à partir de son numero
      *
      * @param numero numero du malade
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -51,7 +51,7 @@ public class Malade {
      * @param nom nom du malade
      * @param prenom prenom du malade
      * @param tel téléphone du malade
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -77,7 +77,7 @@ public class Malade {
     /**
      * Récupère tous les malades !
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -134,7 +134,7 @@ public class Malade {
     /**
      * Renvoie la liste de docteurs s'occupant de ce patient
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      * @return liste des docteurs
      *
      * @throws SQLException erreur sur la requête

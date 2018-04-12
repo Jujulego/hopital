@@ -28,7 +28,7 @@ public class Employe {
      * Récupère un employé à partir de son numero
      *
      * @param numero numero de l'employé
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -54,7 +54,7 @@ public class Employe {
      * @param nom nom de l'employé
      * @param prenom prenom de l'employé
      * @param tel téléphone de l'employé
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -80,7 +80,7 @@ public class Employe {
     /**
      * Récupère tous les employés !
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -124,7 +124,7 @@ public class Employe {
      * Remplit l'objet avec les champs de la requete
      *
      * @param resultSet resultat d'une recherche
-     * @param connexion connexion à la base de donnée (objets liés)
+     * @param connexion connexionECE à la base de donnée (objets liés)
      *
      * @throws SQLException erreur de communication avec la base de données
      */

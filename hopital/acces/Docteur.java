@@ -20,7 +20,7 @@ public class Docteur extends Employe {
      * Récupère un docteur à partir de son numero
      *
      * @param numero numero du docteur
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -46,7 +46,7 @@ public class Docteur extends Employe {
      * @param nom nom du docteur
      * @param prenom prenom du docteur
      * @param tel téléphone du docteur
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -72,7 +72,7 @@ public class Docteur extends Employe {
     /**
      * Récupère tous les docteurs !
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -109,7 +109,7 @@ public class Docteur extends Employe {
      * Remplit l'objet avec les champs de la requete
      *
      * @param resultSet resultat d'une recherche.
-     * @param connexion connexion à la base de donnée (objets liés)
+     * @param connexion connexionECE à la base de donnée (objets liés)
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -129,7 +129,7 @@ public class Docteur extends Employe {
     /**
      * Renvoie la liste des patients du docteur
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      * @return liste des patients
      *
      * @throws SQLException erreur sur la requête

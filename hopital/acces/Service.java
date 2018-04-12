@@ -24,7 +24,7 @@ public class Service {
      * Récupère un service à partir de son code
      *
      * @param code code du service
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -49,7 +49,7 @@ public class Service {
      * Récupère un service à partir de son nom
      *
      * @param nom nom du service
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -75,7 +75,7 @@ public class Service {
     /**
      * Récupère tous les services !
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */

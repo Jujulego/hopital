@@ -23,7 +23,7 @@ public class Infirmier extends Employe {
      * Récupère un infirmier à partir de son numero
      *
      * @param numero numero de l'infirmier
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -49,7 +49,7 @@ public class Infirmier extends Employe {
      * @param nom nom de l'infirmier
      * @param prenom prenom de l'infirmier
      * @param tel téléphone de l'infirmier
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -75,7 +75,7 @@ public class Infirmier extends Employe {
     /**
      * Récupère tous les infirmiers !
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -105,7 +105,7 @@ public class Infirmier extends Employe {
      * Remplit l'objet avec les champs de la requete
      *
      * @param resultSet resultat d'une recherche.
-     * @param connexion connexion à la base de donnée (objets liés)
+     * @param connexion connexionECE à la base de donnée (objets liés)
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -133,7 +133,7 @@ public class Infirmier extends Employe {
     /**
      * Renvoie la liste des chambres que surveille l'infirmier
      *
-     * @param connexion connexion à la base de données
+     * @param connexion connexionECE à la base de données
      * @return liste des chambres
      */
     public LinkedList<Chambre> chambresSurveillees(Connexion connexion) throws SQLException {

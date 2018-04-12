@@ -14,14 +14,14 @@ import java.util.ArrayList;
  */
 public class Connexion {
     // Attributs
-    private Connection conn; // connexion à la base
+    private Connection conn; // connexionECE à la base
     private SSHTunnel sshTunnel = null;
 
     /**
      * Connexion à la base de données locale
      *
      * @param nameDatabase nom de la base locale
-     * @param loginDatabase identifiant de connexion au serveur de base de données
+     * @param loginDatabase identifiant de connexionECE au serveur de base de données
      * @param passwordDatabase mot de passe associé
      *
      * @throws java.lang.ClassNotFoundException en cas d'absence du driver
@@ -40,13 +40,13 @@ public class Connexion {
     /**
      * Connexion à la base de données distante sur le serveur de l'ECE
      *
-     * @param usernameECE identifiant de connexion à l'ECE
+     * @param usernameECE identifiant de connexionECE à l'ECE
      * @param passwordECE mot de passe ECE
-     * @param loginDatabase identifiant de connexion au serveur de base de données
+     * @param loginDatabase identifiant de connexionECE au serveur de base de données
      * @param passwordDatabase mot de passe base de données
      *
-     * @throws SQLException erreur de connexion
-     * @throws JSchException erreur de connexion SSH
+     * @throws SQLException erreur de connexionECE
+     * @throws JSchException erreur de connexionECE SSH
      * @throws ClassNotFoundException en cas d'absence du driver
      */
     public Connexion(String usernameECE, String passwordECE, String loginDatabase, String passwordDatabase) throws SQLException, JSchException, ClassNotFoundException {
@@ -57,7 +57,7 @@ public class Connexion {
         sshTunnel = new SSHTunnel(usernameECE, passwordECE);
         sshTunnel.connect();
 
-        //création d'une connexion JDBC à la base
+        //création d'une connexionECE JDBC à la base
         conn = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3305/" + usernameECE,
                 loginDatabase, passwordDatabase

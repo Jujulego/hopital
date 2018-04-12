@@ -47,7 +47,7 @@ public class Chambre {
     /**
      * Récupère toutes les chambres !
      *
-     * @param connexion connexion à la base de donnée
+     * @param connexion connexionECE à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -90,7 +90,7 @@ public class Chambre {
      * Remplit l'objet avec les champs de la requete
      *
      * @param resultSet resultat d'une recherche.
-     * @param connexion connexion à la base de donnée (objets liés)
+     * @param connexion connexionECE à la base de donnée (objets liés)
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -103,7 +103,7 @@ public class Chambre {
      *
      * @param resultSet resultat d'une recherche.
      * @param service service contenant la chambre
-     * @param connexion connexion à la base de donnée (objets liés)
+     * @param connexion connexionECE à la base de donnée (objets liés)
      *
      * @throws SQLException erreur de communication avec la base de données
      */

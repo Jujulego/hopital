@@ -3,7 +3,7 @@ package hopital.connexion;
 import com.jcraft.jsch.*;
 
 /**
- * Etablit une connexion au serveur de la base de données via un tunnel SSH
+ * Etablit une connexionECE au serveur de la base de données via un tunnel SSH
  *
  * Date: 23/03/2014 Time: 13:30
  *
@@ -24,7 +24,7 @@ public class SSHTunnel {
      *       Constructors     *
      ************************ */
     /**
-     * Constructeur permettant la connexion à un serveur via un double tunnel
+     * Constructeur permettant la connexionECE à un serveur via un double tunnel
      * SSH
      *
      * @param username Nom d'utilisateur ECE
@@ -46,7 +46,7 @@ public class SSHTunnel {
     }
 
     /**
-     * Constructeur permettant la connexion automatique au serveur de la base de
+     * Constructeur permettant la connexionECE automatique au serveur de la base de
      * données ECE
      *
      * @param username Nom d'utilisateur ECE
@@ -63,17 +63,17 @@ public class SSHTunnel {
     /**
      * Tente de se connecter au serveur
      *
-     * @return la session de connexion
+     * @return la session de connexionECE
      *
-     * @throws JSchException en cas d'erreur de connexion
+     * @throws JSchException en cas d'erreur de connexionECE
      */
     @SuppressWarnings("CallToThreadDumpStack")
     public Session connect() throws JSchException {
-        // Initialise la connexion
+        // Initialise la connexionECE
         JSch jsch = new JSch();
         session = jsch.getSession(this.getUsername(), this.getTunnelHost(), this.getTunnelHostPort());
 
-        // Automatiser la connexion (ne pas afficher d'interface pour rentrer les mots de passe)
+        // Automatiser la connexionECE (ne pas afficher d'interface pour rentrer les mots de passe)
         session.setUserInfo(new SilentUserInfo(this.password));
 
         // Etablissement du premier tunnel SSH
@@ -136,8 +136,8 @@ public class SSHTunnel {
      *      Private class     *
      ************************ */
     /**
-     * Classe gérant l'interaction de l'utilisateur lors de la connexion. Elle
-     * automatise la connexion en fournissant les informations de connexion sans
+     * Classe gérant l'interaction de l'utilisateur lors de la connexionECE. Elle
+     * automatise la connexionECE en fournissant les informations de connexionECE sans
      * les demander à l'utilisateur
      */
     static class SilentUserInfo implements UserInfo, UIKeyboardInteractive {

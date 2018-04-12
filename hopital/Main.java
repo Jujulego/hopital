@@ -1,8 +1,11 @@
 package hopital;
 
 import com.jcraft.jsch.JSchException;
-import hopital.acces.*;
+import hopital.acces.Chambre;
+import hopital.acces.Service;
 import hopital.connexion.Connexion;
+import hopital.graphismes.ConnexionECEDialog;
+import hopital.graphismes.Fenetre;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -15,27 +18,29 @@ public class Main {
 
     // Main !!!
     public static void main(String[] args) {
-        try {
-            Connexion connexion = new Connexion("hopital",
+        Fenetre fenetre = new Fenetre();
+
+        /*try {
+            Connexion connexionECE = new Connexion("hopital",
                     "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57"
             );
 
-            /*ResultSet set = connexion.execSelect(
+            /*ResultSet set = connexionECE.execSelect(
                     "select code_service,no_chambre,surveillant,nb_lits " +
                             "from chambre " +
                             "where code_service='CAR'"
             );
-            afficher(set);*/
+            afficher(set);* /
 
-            for (Chambre chambre : new Service("CAR", connexion).getChambres(connexion)) {
+            for (Chambre chambre : new Service("CAR", connexionECE).getChambres(connexionECE)) {
                 System.out.println(chambre);
             }
 
-            connexion.deconnecter();
+            connexionECE.deconnecter();
 
         } catch (JSchException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     /**

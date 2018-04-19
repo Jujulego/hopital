@@ -8,9 +8,9 @@ Traumatologue
 
 Infirmier
 JOUR NUIT
+
 Cardiologie
-.
-.
-.
+Chirurgie generale
+Reanimation et traumatologie
 
 

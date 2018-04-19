@@ -35,7 +35,21 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     JButton option1;
     JButton option2;
     JButton option3;
-    JList<Employe> jliste_metier_specifique= new JList<>();
+
+    JList<String> j1_metier= new JList<>();
+    JList<String> j2_specification= new JList<>();
+    JList<String> j3_info=new JList<>();
+
+
+    //j1
+    DefaultListModel<String> trois_metier = new DefaultListModel<>();
+
+    //j2
+    DefaultListModel<String> ListeMetier_docteur= new DefaultListModel<>();
+    DefaultListModel<String> ListeMetier_infirmier= new DefaultListModel<>();
+
+    //j3
+
 
     // Constructeur
     public Fenetre() {
@@ -46,6 +60,24 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         // Activation de la boite de dialogue
         connexionDialog.setVisible(true);
         connexionDialog.ajouterConnexionListener(this);
+
+        //Chargement des listes
+        trois_metier.addElement("Docteur");
+        trois_metier.addElement("Infirmier");
+        trois_metier.addElement("Patient");
+
+        ListeMetier_docteur.addElement("Anesthesiste");
+        ListeMetier_docteur.addElement("Cardiologue");
+        ListeMetier_docteur.addElement("Orthopediste");
+        ListeMetier_docteur.addElement("Pneumologue");
+        ListeMetier_docteur.addElement("Radiologue");
+        ListeMetier_docteur.addElement("Traumatologue");
+
+        ListeMetier_infirmier.addElement("Cardiologie");
+        ListeMetier_infirmier.addElement("Chirurgie generale");
+        ListeMetier_infirmier.addElement("Reanimation et Traumatologie");
+
+
     }
 
     // Méthodes
@@ -75,9 +107,9 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         connexionDialog.setVisible(false);
 
         //Ben caca
-        option1=new JButton("Option1");
-        option2=new JButton("Option2");
-        option3=new JButton("Docteur");
+        option1=new JButton("Mise a jour");
+        option2=new JButton("Recherche");
+        option3=new JButton("Generation");
 
         setLayout(new FlowLayout(FlowLayout.CENTER, 8, 8));
         add(option1);
@@ -99,29 +131,13 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     }
 
 
-    //Ben
-    /*
-    @Override
-    public void paintComponents(Graphics g) {
-        super.paintComponents(g);
-        Color oldColor = g.getColor();
-        Color couleur;
-        couleur=Color.red;
-        g.setColor( couleur );
-        g.drawString("Bonjours , on est le (daet), vous avez n projet",60,60);
-        g.setColor( oldColor );
-
-    }
-*/
     // Evenements
     @Override
     public void actionPerformed(ActionEvent e) {
         Object Source=e.getSource();
 
-
         if(Source==option1)
         {
-            System.out.println("Option 1");
             try {
                 LinkedList<Employe> employes = Employe.tousEmployes(connexion);
                 JList<Employe> list = new JList<>(employes.toArray(new Employe[employes.size()]));
@@ -129,16 +145,8 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                 JScrollPane scroll = new JScrollPane(list);
                 add(scroll);
 
-                //System.out.println("indice : " + list.getSelectedIndex());
-                //System.out.println("indice : " + list.getSelectionMode());
-
-
                 getContentPane().validate();
                 getContentPane().repaint();
-
-
-
-
 
             } catch (SQLException e1) {
                 e1.printStackTrace();
@@ -147,137 +155,146 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         }
 
-        /*
+
         if(Source==option2)
         {
-            System.out.println("Option 2");
-            try {
-                LinkedList<Docteur> docteur = Docteur.tousDocteurs(connexion);
-                JList<Employe> list = new JList<>(docteur.toArray(new Docteur[docteur.size()]));
+            getContentPane().removeAll();
 
-                JScrollPane scroll = new JScrollPane(list);
-                add(scroll);
-
-
-                for (int i=0;i<docteur.size();i++)
-                {
-                    Docteur bunny=docteur.get(i);
-                    //if(bunny.getSpecialite()=="")
-
-                }
-
-
-                getContentPane().validate();
-                getContentPane().repaint();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-
-
-
-        }
-
-        if(Source==option3)
-        {
-            System.out.println("Option 3");
-            try {
-                LinkedList<Infirmier> infirmier  = Infirmier.tousInfirmiers(connexion);
-                JList<Employe> list = new JList<>(infirmier.toArray(new Infirmier[infirmier.size()]));
-
-                JScrollPane scroll = new JScrollPane(list);
-                add(scroll);
-
-                getContentPane().validate();
-                getContentPane().repaint();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        }
-        */
-        if(Source==option3)
-        {
-            System.out.println("Option 3");
-
-            DefaultListModel<String> ListeMetier = new DefaultListModel<>();
-            ListeMetier.addElement("Anesthesiste");
-            ListeMetier.addElement("Cardiologue");
-            ListeMetier.addElement("Orthopediste");
-            ListeMetier.addElement("Pneumologue");
-            ListeMetier.addElement("Radiologue");
-            ListeMetier.addElement("Traumatologue");
-
-
-            JList<String> jliste_metier = new JList<>(ListeMetier);
-
-            JScrollPane scroll = new JScrollPane(jliste_metier);
-            add(scroll);
-            jliste_metier.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-            getContentPane().validate();
+            getContentPane().revalidate();
             getContentPane().repaint();
 
-            jliste_metier.addListSelectionListener(new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent e)
-                {
-                    if(!e.getValueIsAdjusting()) {
-                        final List<String> selectedValuesList = jliste_metier.getSelectedValuesList();
-                        //System.out.println(selectedValuesList);
-                        afficher_classe_metier(selectedValuesList.toString());
-                    }
-                }
-            });
+            afficher_j1_metier();
+
+        }
+
+
+        if(Source==option3)
+        {
+
         }
 
     }
 
-    public void afficher_classe_metier(String metier)
-    {
-        DefaultListModel<Employe> employe_specifique = new DefaultListModel<>();
 
-        try{
-            LinkedList<Employe> employes = Employe.tousEmployes(connexion);
+    public void afficher_j1_metier(){
+        j1_metier.setModel(trois_metier);
 
+        j1_metier.addListSelectionListener(new ListSelectionListener() {
 
-            for(int i=0; i<employes.size();i++)
+            @Override
+            public void valueChanged(ListSelectionEvent e)
             {
-                Employe e=employes.get(i);
-                //System.out.println("aaaa: :" + instanceof e );
-                if(e instanceof Docteur)
-                {
-                    String a="[" + ((Docteur) e).getSpecialite() + "]";
-                    if(a.equals(metier))
-                    {
-                        //System.out.println(((Docteur) e).toString());
-                        employe_specifique.addElement(e);
-                    }
+                String a;
+                if(!e.getValueIsAdjusting()) {
+                    final List<String> selectedValuesList = j1_metier.getSelectedValuesList();
+                    a=selectedValuesList.toString();
+                    //On enleve le dernier caractere qui est un ]
+                    a=a.replaceAll("]","");
+
+                    //On enleve le 1er caractère qui est un [
+                    a=a.substring(1);
+
+                    afficher_j2_specification(a);
+                    //j3_info.setVisible(false);
+
                 }
-
             }
-        } catch (SQLException e1) {
-        e1.printStackTrace();
-    }
+        });
 
-    if(employe_specifique.size()!=0){
-        //jliste_metier_specifique = new JList<>(employe_specifique);
-
-        //JList.setListData(new String[0]; else jliste_metier_specifique.removeAllElements();
-        jliste_metier_specifique.removeAll();
-
-        //jliste_metier_specifique.add(employe_specifique);
-        jliste_metier_specifique.setModel(employe_specifique);
-        JScrollPane scroll = new JScrollPane(jliste_metier_specifique);
+        JScrollPane scroll = new JScrollPane(j1_metier);
         add(scroll);
         getContentPane().validate();
         getContentPane().repaint();
     }
 
+    public void afficher_j2_specification(String a){
+
+        if(a.equals("Docteur"))
+        {
+            j2_specification.setModel(ListeMetier_docteur);
+        }
+
+        if(a.equals("Infirmier"))
+        {
+            j2_specification.setModel(ListeMetier_infirmier);
+        }
+        if(a.equals("Patient"))
+        {
+            System.out.println("AZAZAZAZ");
+            j2_specification.removeAll();
+            j3_info.removeAll();
+            getContentPane().validate();
+            getContentPane().repaint();
+            
+        }
+
+        j2_specification.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e)
+            {
+                String a;
+                if(!e.getValueIsAdjusting()) {
+                    final List<String> selectedValuesList = j2_specification.getSelectedValuesList();
+                    a=selectedValuesList.toString();
+
+                    //On enleve le dernier caractere qui est un ]
+                    a=a.replaceAll("]","");
+
+                    //On enleve le 1er caractère qui est un [
+                    a=a.substring(1);
+                    afficher_j3_info(a);
+                }
+            }
+        });
 
 
 
+        JScrollPane scroll = new JScrollPane(j2_specification);
+        add(scroll);
+        getContentPane().validate();
+        getContentPane().repaint();
+
+    }
+
+
+    public void afficher_j3_info(String a){
+        DefaultListModel<String>a_afficher=new DefaultListModel<>();
+
+        try {
+            LinkedList<Employe> employes = Employe.tousEmployes(connexion);
+            for(int i=0;i<employes.size();i++)
+            {
+                Employe e=employes.get(i);
+
+                if( (e instanceof Docteur) && ((Docteur) e).getSpecialite().equals(a) )
+                {
+                    a_afficher.addElement(e.toString());
+                }
+
+                if( ( e instanceof Infirmier) && (((Infirmier) e).getService().toString()).contains(a) )
+                {
+                    a_afficher.addElement(e.toString());
+                }
+            }
+
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+
+        j3_info.setModel(a_afficher);
+        j3_info.setVisible(true);
+
+        JScrollPane scroll = new JScrollPane(j3_info);
+        add(scroll);
+        getContentPane().validate();
+        getContentPane().repaint();
 
 
     }
+
+
+
 
 
 

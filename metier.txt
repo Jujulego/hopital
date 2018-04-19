@@ -1,0 +1,16 @@
+Docteur
+Anesthesiste
+Cardiologue
+Orthopediste
+Pneumologue
+Radiologue
+Traumatologue
+
+Infirmier
+JOUR NUIT
+Cardiologie
+.
+.
+.
+
+

@@ -2,6 +2,7 @@ package hopital;
 
 import com.jcraft.jsch.JSchException;
 import hopital.acces.Chambre;
+import hopital.acces.Employe;
 import hopital.acces.Service;
 import hopital.connexion.Connexion;
 import hopital.graphismes.ConnexionECEDialog;
@@ -18,9 +19,9 @@ public class Main {
 
     // Main !!!
     public static void main(String[] args) {
-        Fenetre fenetre = new Fenetre();
+        //Fenetre fenetre = new Fenetre();
 
-        /*try {
+        try {
             Connexion connexionECE = new Connexion("hopital",
                     "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57"
             );
@@ -30,17 +31,17 @@ public class Main {
                             "from chambre " +
                             "where code_service='CAR'"
             );
-            afficher(set);* /
+            afficher(set);*/
 
-            for (Chambre chambre : new Service("CAR", connexionECE).getChambres(connexionECE)) {
-                System.out.println(chambre);
+            for (Employe employe : Employe.tousEmployes(connexionECE)) {
+                System.out.println(employe);
             }
 
             connexionECE.deconnecter();
 
         } catch (JSchException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     /**

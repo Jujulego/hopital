@@ -124,10 +124,10 @@ public class Infirmier extends Employe {
     @Override
     public String toString() {
         if (service == null) {
-            return String.format("Infirmier n°%02d (%s): %s %s, %s, %s, %s€", getNumero(), rotation, getPrenom(), getNom(), getAdresse(), getTel(), salaire);
+            return String.format("<Infirmier n°%02d (%s): %s %s, %s, %s, %s€>", getNumero(), rotation, getPrenom(), getNom(), getAdresse(), getTel(), salaire);
         }
 
-        return String.format("Infirmier n°%02d (%s %s): %s %s, %s, %s, %s€", getNumero(), rotation, service.getNom(), getPrenom(), getNom(), getAdresse(), getTel(), salaire);
+        return String.format("<Infirmier n°%02d (%s %s): %s %s, %s, %s, %s€>", getNumero(), rotation, service.getNom(), getPrenom(), getNom(), getAdresse(), getTel(), salaire);
     }
 
     /**

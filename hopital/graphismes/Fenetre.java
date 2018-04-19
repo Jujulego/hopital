@@ -1,11 +1,9 @@
 package hopital.graphismes;
 
-import com.jcraft.jsch.JSchException;
 import hopital.connexion.Connexion;
 import hopital.connexion.ConnexionThread;
 
 import javax.swing.*;
-import java.sql.SQLException;
 
 public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListener, ConnexionThread.ConnexionListener {
     // Attrinuts
@@ -21,6 +19,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         // Activation de la boite de dialogue
         connexionDialog.setVisible(true);
+        connexionDialog.setLocationRelativeTo(this);
         connexionDialog.ajouterConnexionListener(this);
     }
 
@@ -29,7 +28,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     public void connexionECE(String utilisateur, char[] motDePasse) {
         connexionThread = new ConnexionThread(
                 utilisateur, new String(motDePasse),
-                "jc151870", ""
+                "jc151870", "YDRyIxgl"
         );
         connexionThread.ajouterConnexionListener(this);
         connexionThread.start();

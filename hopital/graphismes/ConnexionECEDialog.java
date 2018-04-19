@@ -45,6 +45,8 @@ public class ConnexionECEDialog extends JDialog {
         boutons.add(btnConnexion);
         add(boutons);
 
+
+
         // Evenements
         DocumentListener documentListener = new DocumentListener() {
             @Override

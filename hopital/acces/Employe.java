@@ -169,7 +169,7 @@ public class Employe extends DataObject {
         numero  = resultSet.getInt("numero");
         nom     = resultSet.getString("nom");
         prenom  = resultSet.getString("prenom");
-        telephone = resultSet.getString("telephone");
+        telephone = resultSet.getString("tel");
         adresse = resultSet.getString("adresse");
     }
 
@@ -187,7 +187,7 @@ public class Employe extends DataObject {
         // Requête
         PreparedStatement requete = connexion.prepRequete(
                 "update employe " +
-                        "set nom=?, prenom=?, adresse=?, telephone=? " +
+                        "set nom=?, prenom=?, adresse=?, tel=? " +
                         "where numero = ?"
         );
 

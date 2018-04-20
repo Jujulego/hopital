@@ -20,7 +20,7 @@ public class Main {
 
     // Main !!!
     public static void main(String[] args) {
-        //Fenetre fenetre = new Fenetre();
+        Fenetre fenetre = new Fenetre();
 
         try {
             Connexion connexion = new Connexion("hopital",

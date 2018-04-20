@@ -4,6 +4,7 @@ import com.jcraft.jsch.JSchException;
 import hopital.acces.Docteur;
 import hopital.acces.Employe;
 import hopital.acces.Infirmier;
+import hopital.acces.Service;
 import hopital.connexion.Connexion;
 import hopital.connexion.ConnexionThread;
 
@@ -16,6 +17,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.awt.Graphics;
 import java.util.LinkedList;
@@ -39,6 +41,13 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     JList<String> j1_metier;
     JList<String> j2_specification;
     JList<String> j3_info;
+
+    JScrollPane scroll;
+    JScrollPane scroll2;
+    JScrollPane scroll3;
+
+
+
 
 
     //j1_metier
@@ -68,18 +77,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         trois_metier.addElement("Docteur");
         trois_metier.addElement("Infirmier");
         trois_metier.addElement("Patient");
-
-        ListeMetier_docteur.addElement("Anesthesiste");
-        ListeMetier_docteur.addElement("Cardiologue");
-        ListeMetier_docteur.addElement("Orthopediste");
-        ListeMetier_docteur.addElement("Pneumologue");
-        ListeMetier_docteur.addElement("Radiologue");
-        ListeMetier_docteur.addElement("Traumatologue");
-
-        ListeMetier_infirmier.addElement("Cardiologie");
-        ListeMetier_infirmier.addElement("Chirurgie generale");
-        ListeMetier_infirmier.addElement("Reanimation et Traumatologie");
-
 
     }
 
@@ -122,6 +119,25 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         option1.addActionListener(this);
         option2.addActionListener(this);
         option3.addActionListener(this);
+
+        //On rempli la ListeMetier_infirmier avec  tous_Services qui fait les requetes
+        try {
+
+            LinkedList<Service>tous_Services= Service.tousServices(connexion);
+            for(Service m_service:tous_Services){
+                ListeMetier_infirmier.addElement(m_service.getNom());
+            }
+
+            ResultSet requete_liste_metier_docteur = connexion.execSelect("select distinct specialite from docteur");
+            requete_liste_metier_docteur.beforeFirst();
+            while(requete_liste_metier_docteur.next())
+            {
+                ListeMetier_docteur.addElement(requete_liste_metier_docteur.getString("specialite"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         getContentPane().validate();
         getContentPane().repaint();
@@ -181,11 +197,16 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
     public void afficher_j1_metier(){
         j1_metier= new JList<>(trois_metier);
+        scroll = new JScrollPane(j1_metier);
+
         j2_specification= new JList(ListeMetier_personne);
+        scroll2=new JScrollPane(j2_specification);
+
         j3_info=new JList<>(ListeInfo);
+        scroll3=new JScrollPane(j3_info);
 
-
-        //j1_metier.setModel(trois_metier);
+        scroll2.setVisible(false);
+        scroll3.setVisible(false);
 
         j1_metier.addListSelectionListener(new ListSelectionListener() {
 
@@ -204,23 +225,25 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
                     ListeMetier_personne.clear();
                     ListeInfo.clear();
-                    getContentPane().validate();
-                    getContentPane().repaint();
+
+
 
                     afficher_j2_specification(a);
-                    //j3_info.setVisible(false);
+
+
 
                 }
             }
         });
 
-        JScrollPane scroll = new JScrollPane(j1_metier);
         add(scroll);
         getContentPane().validate();
         getContentPane().repaint();
     }
 
     public void afficher_j2_specification(String a){
+        scroll2.setVisible(true);
+        scroll3.setVisible(false);
 
         if(a.equals("Docteur"))
         {
@@ -240,7 +263,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
             for(int i=0;i<ListeMetier_infirmier.size();i++)
             {
-                ListeMetier_personne.addElement(ListeMetier_docteur.getElementAt(i));
+                ListeMetier_personne.addElement(ListeMetier_infirmier.getElementAt(i));
             }
             //j2_specification.setModel(ListeMetier_infirmier);
             //listModel.addElement(ListeMetier_infirmier);
@@ -252,6 +275,9 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             ListeMetier_personne.removeAllElements();
             j2_specification.removeAll();
             j3_info.removeAll();
+
+            getContentPane().validate();
+            getContentPane().repaint();
 
         }
 
@@ -281,8 +307,8 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
 
 
-        JScrollPane scroll = new JScrollPane(j2_specification);
-        add(scroll);
+        add(scroll2);
+
         getContentPane().validate();
         getContentPane().repaint();
 
@@ -290,6 +316,8 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
 
     public void afficher_j3_info(String a){
+        scroll3.setVisible(true);
+
         DefaultListModel<String>a_afficher=new DefaultListModel<>();
 
         try {
@@ -301,6 +329,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                 if( (e instanceof Docteur) && ((Docteur) e).getSpecialite().equals(a) )
                 {
                     ListeInfo.addElement(e.toString());
+
                 }
 
                 if( ( e instanceof Infirmier) && (((Infirmier) e).getService().toString()).contains(a) )
@@ -315,8 +344,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         //j3_info.setModel(a_afficher);
 
-        JScrollPane scroll = new JScrollPane(j3_info);
-        add(scroll);
+        add(scroll3);
 
         getContentPane().validate();
         getContentPane().repaint();

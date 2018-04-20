@@ -16,7 +16,7 @@ public class Service extends DataObject {
     private Docteur directeur = null;
 
     // Constructeurs
-    private Service() {
+    protected Service() {
 
     }
 

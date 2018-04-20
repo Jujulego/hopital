@@ -17,6 +17,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.awt.Graphics;
@@ -28,7 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 
-public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListener, ConnexionThread.ConnexionListener, ActionListener {
+public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListener, ConnexionThread.ConnexionListener, ActionListener, ItemListener {
     // Attrinuts
     ConnexionECEDialog connexionDialog = new ConnexionECEDialog();
     ConnexionThread connexionThread;
@@ -37,6 +39,9 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     JButton option1;
     JButton option2;
     JButton option3;
+
+    JCheckBox jour;
+    JCheckBox nuit;
 
     JList<String> j1_metier;
     JList<String> j2_specification;
@@ -150,6 +155,24 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     }
 
 
+    //Listener des checkbox jour/nuit
+    public void itemStateChanged(ItemEvent e) {
+        Object source = e.getItemSelectable();
+
+        String a;
+        final List<String> selectedValuesList = j2_specification.getSelectedValuesList();
+        a=selectedValuesList.toString();
+
+        //On enleve le dernier caractere qui est un ]
+        a=a.replaceAll("]","");
+
+        //On enleve le 1er caractère qui est un [
+        a=a.substring(1);
+        ListeInfo.clear();
+        if(scroll3.isVisible())afficher_j3_info(a);
+
+    }
+
     // Evenements
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -208,6 +231,20 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         scroll2.setVisible(false);
         scroll3.setVisible(false);
 
+        jour=new JCheckBox("Jour");
+        jour.setSelected(false);
+        jour.setVisible(false);
+        add(jour);
+        jour.addItemListener(this);
+
+        nuit= new JCheckBox("Nuit");
+        nuit.setSelected(false);
+        nuit.setVisible(false);
+        add(nuit);
+        nuit.addItemListener(this);
+
+
+
         j1_metier.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -226,12 +263,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                     ListeMetier_personne.clear();
                     ListeInfo.clear();
 
-
-
                     afficher_j2_specification(a);
-
-
-
                 }
             }
         });
@@ -250,24 +282,20 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
            for(int i=0;i<ListeMetier_docteur.size();i++)
             {
-                //listModel.addElement(ListeMetier_docteur.getElementAt(i));
                 ListeMetier_personne.addElement(ListeMetier_docteur.getElementAt(i));
             }
-
-            //listModel.addElement(ListeMetier_docteur);
-            //j2_specification.setModel(ListeMetier_docteur);
+            jour.setVisible(false);
+            nuit.setVisible(false);
         }
 
         if(a.equals("Infirmier"))
         {
-
             for(int i=0;i<ListeMetier_infirmier.size();i++)
             {
                 ListeMetier_personne.addElement(ListeMetier_infirmier.getElementAt(i));
             }
-            //j2_specification.setModel(ListeMetier_infirmier);
-            //listModel.addElement(ListeMetier_infirmier);
-
+            jour.setVisible(true);
+            nuit.setVisible(true);
         }
         if(a.equals("Patient"))
         {
@@ -278,9 +306,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             getContentPane().repaint();
 
         }
-
-        //j2_specification.setModel(listModel);
-        //j2_specification=new JList<>(listModel);
 
         j2_specification.addListSelectionListener(new ListSelectionListener() {
 
@@ -316,8 +341,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     public void afficher_j3_info(String a){
         scroll3.setVisible(true);
 
-        DefaultListModel<String>a_afficher=new DefaultListModel<>();
-
         try {
             LinkedList<Employe> employes = Employe.tousEmployes(connexion);
             for(int i=0;i<employes.size();i++)
@@ -330,10 +353,19 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
                 }
 
-                if( ( e instanceof Infirmier) && (((Infirmier) e).getService().toString()).contains(a) )
+
+                if( ( e instanceof Infirmier) && (((Infirmier) e).getService().getNom().equals(a) ) )
                 {
-                    ListeInfo.addElement(e.toString());
+                    if( (((Infirmier) e).getRotation().equals("JOUR")) && jour.isSelected() ){
+                        ListeInfo.addElement(e.toString());
+                    }
+                    if( (((Infirmier) e).getRotation().equals("NUIT") ) && nuit.isSelected() ){
+                        ListeInfo.addElement(e.toString());
+                    }
+
                 }
+
+
             }
 
         } catch (SQLException e1) {

@@ -36,6 +36,9 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     ConnexionThread connexionThread;
     Connexion connexion;
 
+    JPanel panoramix;
+    JPanel jour_nuit;
+
     JButton option1;
     JButton option2;
     JButton option3;
@@ -50,9 +53,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     JScrollPane scroll;
     JScrollPane scroll2;
     JScrollPane scroll3;
-
-
-
 
 
     //j1_metier
@@ -73,15 +73,28 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         setSize(1080, 760);
         setVisible(true);
 
-        // Activation de la boite de dialogue
-        connexionDialog.setVisible(true);
-        connexionDialog.setLocationRelativeTo(this);
-        connexionDialog.ajouterConnexionListener(this);
-
         //Chargement des listes
         trois_metier.addElement("Docteur");
         trois_metier.addElement("Infirmier");
         trois_metier.addElement("Patient");
+
+
+        jour_nuit=new JPanel();
+        jour_nuit.setLayout(new FlowLayout());
+
+        panoramix=new JPanel();
+        panoramix.setLayout(new BorderLayout());
+        panoramix.setBackground(Color.GREEN);
+
+
+
+        this.setContentPane(panoramix);
+        this.setVisible(true);
+
+        // Activation de la boite de dialogue
+        connexionDialog.setVisible(true);
+        connexionDialog.setLocationRelativeTo(this);
+        connexionDialog.ajouterConnexionListener(this);
 
     }
 
@@ -120,6 +133,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         add(option1);
         add(option2);
         add(option3);
+
 
         option1.addActionListener(this);
         option2.addActionListener(this);
@@ -234,14 +248,22 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         jour=new JCheckBox("Jour");
         jour.setSelected(false);
         jour.setVisible(false);
-        add(jour);
         jour.addItemListener(this);
 
         nuit= new JCheckBox("Nuit");
         nuit.setSelected(false);
         nuit.setVisible(false);
-        add(nuit);
         nuit.addItemListener(this);
+
+        jour_nuit.add(jour);
+        jour_nuit.add(nuit);
+
+        panoramix.add(scroll,BorderLayout.WEST);
+        panoramix.add(scroll2,BorderLayout.CENTER);
+        panoramix.add(scroll3,BorderLayout.EAST);
+        panoramix.add(jour_nuit,BorderLayout.SOUTH);
+
+
 
 
 
@@ -268,7 +290,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             }
         });
 
-        add(scroll);
         getContentPane().validate();
         getContentPane().repaint();
     }
@@ -302,6 +323,9 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             ListeMetier_personne.clear();
             ListeInfo.clear();
 
+            nuit.setVisible(false);
+            jour.setVisible(false);
+
             getContentPane().validate();
             getContentPane().repaint();
 
@@ -327,10 +351,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                 }
             }
         });
-
-
-
-        add(scroll2);
 
         getContentPane().validate();
         getContentPane().repaint();
@@ -372,20 +392,10 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             e1.printStackTrace();
         }
 
-        //j3_info.setModel(a_afficher);
-
-        add(scroll3);
-
         getContentPane().validate();
         getContentPane().repaint();
 
-
     }
-
-
-
-
-
 
 
 

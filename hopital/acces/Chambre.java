@@ -15,7 +15,7 @@ import java.util.LinkedList;
  *
  * @author julien
  */
-public class Chambre {
+public class Chambre extends DataObject {
     // Attributs
     private int numero;
     private Service service;
@@ -26,7 +26,7 @@ public class Chambre {
     private boolean supprime = false;
 
     // Constructeur
-    private Chambre() {
+    protected Chambre() {
 
     }
     public Chambre(Service service, int numero, Connexion connexion) throws SQLException {
@@ -47,7 +47,6 @@ public class Chambre {
     }
 
     // Méthodes statiques
-
     /**
      * Crée une chambre dans la base de données
      *
@@ -108,29 +107,19 @@ public class Chambre {
      * @throws SQLException erreur dans le resultat donné
      */
     public static LinkedList<Chambre> listeChambres(ResultSet resultSet, Connexion connexion) throws SQLException {
-        LinkedList<Chambre> chambres = new LinkedList<>();
-
-        resultSet.beforeFirst();
-        while (resultSet.next()) {
-            Chambre chambre = new Chambre();
-            chambre.remplir(resultSet, connexion);
-
-            chambres.addLast(chambre);
+        try {
+            return listeObjets(Chambre.class, resultSet, connexion);
+        } catch (IllegalAccessException | InstantiationException e) {
+            // N'arrive pas !
+            e.printStackTrace();
         }
 
-        return chambres;
+        return new LinkedList<>();
     }
 
     // Méthodes
-    /**
-     * Remplit l'objet avec les champs de la requete
-     *
-     * @param resultSet resultat d'une recherche.
-     * @param connexion connexion à la base de donnée (objets liés)
-     *
-     * @throws SQLException erreur de communication avec la base de données
-     */
-    private void remplir(ResultSet resultSet, Connexion connexion) throws SQLException {
+    @Override
+    protected void remplir(ResultSet resultSet, Connexion connexion) throws SQLException {
         remplir(resultSet, new Service(resultSet.getString("code_service"), connexion), connexion);
     }
 
@@ -162,12 +151,7 @@ public class Chambre {
         return String.format("<Chambre n°%02d %s : %d lits, surv = %s %s>", numero, service.getNom(), nbLits, surveillant.getPrenom(), surveillant.getNom());
     }
 
-    /**
-     * Enregistre dans la base de données les modifications appliquées à l'objet
-     *
-     * @param connexion connexion à la base données
-     * @throws SQLException erreur de communication avec la base de données
-     */
+    @Override
     public void sauver(Connexion connexion) throws SQLException {
         // Gardien
         if (!modifie) return;
@@ -189,6 +173,7 @@ public class Chambre {
         modifie = false;
     }
 
+    @Override
     public void supprimer(Connexion connexion) throws SQLException {
         // Gardien
         if (supprime) return;

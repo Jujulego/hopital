@@ -13,7 +13,6 @@ public class Docteur extends Employe {
 
     // Constructeur
     protected Docteur() {
-        super();
     }
 
     /**
@@ -69,6 +68,35 @@ public class Docteur extends Employe {
     }
 
     // Méthodes statiques
+    public static Docteur creerDocteur(int numero, String nom, String prenom, String adresse, String telephone, String mutuelle, String specialite, Connexion connexion) throws SQLException {
+        // Requête
+        PreparedStatement requete = connexion.prepRequete("insert into employe values (?, ?, ?, ?, ?)");
+        requete.setInt(1, numero);
+        requete.setString(2, nom);
+        requete.setString(3, prenom);
+        requete.setString(4, adresse);
+        requete.setString(5, telephone);
+
+        requete.execute();
+
+        requete = connexion.prepRequete("insert into docteur values (?, ?)");
+        requete.setInt(1, numero);
+        requete.setString(2, specialite);
+
+        requete.execute();
+
+        // Création de l'objet
+        Docteur docteur = new Docteur();
+        docteur.numero = numero;
+        docteur.nom = nom;
+        docteur.prenom = prenom;
+        docteur.adresse = adresse;
+        docteur.telephone = telephone;
+        docteur.specialite = specialite;
+
+        return docteur;
+    }
+
     /**
      * Récupère tous les docteurs !
      *
@@ -123,7 +151,48 @@ public class Docteur extends Employe {
 
     @Override
     public String toString() {
-        return String.format("<Docteur n°%02d (%s): %s %s, %s, %s>", getNumero(), specialite, getPrenom(), getNom(), getAdresse(), getTel());
+        return String.format("<Docteur n°%02d (%s): %s %s, %s, %s>", getNumero(), specialite, getPrenom(), getNom(), getAdresse(), getTelephone());
+    }
+
+    @Override
+    public void sauver(Connexion connexion) throws SQLException {
+        // Gardien
+        if (!modifie) return;
+        if (supprime) return;
+
+        // Méthode de la classe mère
+        super.sauver(connexion);
+
+        // Requête
+        PreparedStatement requete = connexion.prepRequete(
+                "update docteur " +
+                        "set specialite=? " +
+                        "where numero = ?"
+        );
+
+        requete.setString(1, specialite);
+        requete.setInt(2, numero);
+
+        requete.execute();
+    }
+
+    @Override
+    public void supprimer(Connexion connexion) throws SQLException {
+        // Gardien
+        if (!supprime) return;
+
+        // Requete
+        PreparedStatement requete = connexion.prepRequete(
+                "delete from docteur " +
+                        "where numero = ?"
+        );
+
+        requete.setInt(1, numero);
+
+        requete.execute();
+
+        // suppression de l'employé
+        super.supprimer(connexion);
     }
 
     /**
@@ -151,5 +220,9 @@ public class Docteur extends Employe {
     // - accesseur
     public String getSpecialite() {
         return specialite;
+    }
+    public void setSpecialite(String specialite) {
+        this.specialite = specialite;
+        modifie = true;
     }
 }

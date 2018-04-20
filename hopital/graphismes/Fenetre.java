@@ -36,19 +36,21 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     JButton option2;
     JButton option3;
 
-    JList<String> j1_metier= new JList<>();
-    JList<String> j2_specification= new JList<>();
-    JList<String> j3_info=new JList<>();
+    JList<String> j1_metier;
+    JList<String> j2_specification;
+    JList<String> j3_info;
 
 
-    //j1
+    //j1_metier
     DefaultListModel<String> trois_metier = new DefaultListModel<>();
 
-    //j2
+    //j2_specification
     DefaultListModel<String> ListeMetier_docteur= new DefaultListModel<>();
     DefaultListModel<String> ListeMetier_infirmier= new DefaultListModel<>();
+    DefaultListModel<String> ListeMetier_personne= new DefaultListModel<>();
 
-    //j3
+    //j3_info
+    DefaultListModel<String> ListeInfo = new DefaultListModel<>();
 
 
     // Constructeur
@@ -178,7 +180,12 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
 
     public void afficher_j1_metier(){
-        j1_metier.setModel(trois_metier);
+        j1_metier= new JList<>(trois_metier);
+        j2_specification= new JList(ListeMetier_personne);
+        j3_info=new JList<>(ListeInfo);
+
+
+        //j1_metier.setModel(trois_metier);
 
         j1_metier.addListSelectionListener(new ListSelectionListener() {
 
@@ -194,6 +201,11 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
                     //On enleve le 1er caractère qui est un [
                     a=a.substring(1);
+
+                    ListeMetier_personne.clear();
+                    ListeInfo.clear();
+                    getContentPane().validate();
+                    getContentPane().repaint();
 
                     afficher_j2_specification(a);
                     //j3_info.setVisible(false);
@@ -212,22 +224,39 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         if(a.equals("Docteur"))
         {
-            j2_specification.setModel(ListeMetier_docteur);
+
+           for(int i=0;i<ListeMetier_docteur.size();i++)
+            {
+                //listModel.addElement(ListeMetier_docteur.getElementAt(i));
+                ListeMetier_personne.addElement(ListeMetier_docteur.getElementAt(i));
+            }
+
+            //listModel.addElement(ListeMetier_docteur);
+            //j2_specification.setModel(ListeMetier_docteur);
         }
 
         if(a.equals("Infirmier"))
         {
-            j2_specification.setModel(ListeMetier_infirmier);
+
+            for(int i=0;i<ListeMetier_infirmier.size();i++)
+            {
+                ListeMetier_personne.addElement(ListeMetier_docteur.getElementAt(i));
+            }
+            //j2_specification.setModel(ListeMetier_infirmier);
+            //listModel.addElement(ListeMetier_infirmier);
+
         }
         if(a.equals("Patient"))
         {
             System.out.println("AZAZAZAZ");
+            ListeMetier_personne.removeAllElements();
             j2_specification.removeAll();
             j3_info.removeAll();
-            getContentPane().validate();
-            getContentPane().repaint();
-            
+
         }
+
+        //j2_specification.setModel(listModel);
+        //j2_specification=new JList<>(listModel);
 
         j2_specification.addListSelectionListener(new ListSelectionListener() {
 
@@ -244,6 +273,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
                     //On enleve le 1er caractère qui est un [
                     a=a.substring(1);
+                    ListeInfo.clear();
                     afficher_j3_info(a);
                 }
             }
@@ -270,12 +300,12 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
                 if( (e instanceof Docteur) && ((Docteur) e).getSpecialite().equals(a) )
                 {
-                    a_afficher.addElement(e.toString());
+                    ListeInfo.addElement(e.toString());
                 }
 
                 if( ( e instanceof Infirmier) && (((Infirmier) e).getService().toString()).contains(a) )
                 {
-                    a_afficher.addElement(e.toString());
+                    ListeInfo.addElement(e.toString());
                 }
             }
 
@@ -283,11 +313,11 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             e1.printStackTrace();
         }
 
-        j3_info.setModel(a_afficher);
-        j3_info.setVisible(true);
+        //j3_info.setModel(a_afficher);
 
         JScrollPane scroll = new JScrollPane(j3_info);
         add(scroll);
+
         getContentPane().validate();
         getContentPane().repaint();
 

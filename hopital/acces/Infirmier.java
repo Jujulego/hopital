@@ -120,17 +120,20 @@ public class Infirmier extends Employe {
         );
 
         // Construction du résultat
-        LinkedList<Infirmier> infirmiers = new LinkedList<>();
+        return listeInfirmiers(resultSet, connexion);
+    }
 
-        resultSet.beforeFirst();
-        while (resultSet.next()) {
-            Infirmier infirmier = new Infirmier();
-            infirmier.remplir(resultSet, connexion);
-
-            infirmiers.addLast(infirmier);
+    /**
+     * Construit une liste d'infirmiers, basée sur la liste donnée
+     */
+    public static LinkedList<Infirmier> listeInfirmiers(ResultSet resultSet, Connexion connexion) throws SQLException {
+        try {
+            return listeObjets(Infirmier.class, resultSet, connexion);
+        } catch (IllegalAccessException | InstantiationException e) {
+            e.printStackTrace();
         }
 
-        return infirmiers;
+        return new LinkedList<>();
     }
 
     // Méthodes

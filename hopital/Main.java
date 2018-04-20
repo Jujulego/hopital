@@ -2,12 +2,7 @@ package hopital;
 
 import com.jcraft.jsch.JSchException;
 import hopital.acces.Chambre;
-import hopital.acces.Employe;
-import hopital.acces.Infirmier;
-import hopital.acces.Service;
 import hopital.connexion.Connexion;
-import hopital.graphismes.ConnexionECEDialog;
-import hopital.graphismes.Fenetre;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

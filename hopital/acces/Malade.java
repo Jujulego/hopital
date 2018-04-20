@@ -168,7 +168,7 @@ public class Malade extends DataObject {
         requete.setInt(1, numero);
 
         // Construction du résultat
-        return Docteur.listeDocteurs(requete.executeQuery());
+        return Docteur.listeDocteurs(requete.executeQuery(), connexion);
     }
 
     /**

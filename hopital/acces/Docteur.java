@@ -108,28 +108,23 @@ public class Docteur extends Employe {
         // Requête
         ResultSet resultSet = connexion.execSelect(
                 "select employe.numero,nom,prenom,tel,adresse,specialite " +
-                        "from employe inner join docteur on employe.numero = docteur.numero"
+                        "from employe inner join docteur on employe.numero = docteur.numero "
         );
 
-        return listeDocteurs(resultSet);
+        return listeDocteurs(resultSet, connexion);
     }
 
     /**
      * Construit une liste de docteurs, basée sur la liste donnée
      */
-    public static LinkedList<Docteur> listeDocteurs(ResultSet resultSet) throws SQLException {
-        // Construction du résultat
-        LinkedList<Docteur> docteurs = new LinkedList<>();
-
-        resultSet.beforeFirst();
-        while (resultSet.next()) {
-            Docteur docteur = new Docteur();
-            docteur.remplir(resultSet, null);
-
-            docteurs.addLast(docteur);
+    public static LinkedList<Docteur> listeDocteurs(ResultSet resultSet, Connexion connexion) throws SQLException {
+        try {
+            return listeObjets(Docteur.class, resultSet, connexion);
+        } catch (IllegalAccessException | InstantiationException e) {
+            e.printStackTrace();
         }
 
-        return docteurs;
+        return new LinkedList<>();
     }
 
     // Méthodes
@@ -215,6 +210,31 @@ public class Docteur extends Employe {
 
         // Construction du résultat
         return Malade.listeMalades(requete.executeQuery(), connexion);
+    }
+
+    public void ajouterPatient(Malade malade, Connexion connexion) throws SQLException {
+        // Ajout de la laison :
+        PreparedStatement requete = connexion.prepRequete(
+                "insert into soigne values (?, ?)"
+        );
+
+        requete.setInt(1, numero);
+        requete.setInt(2, malade.getNumero());
+
+        requete.execute();
+    }
+
+    public void enleverPatient(Malade malade, Connexion connexion) throws SQLException {
+        // Suppression de la liaison
+        PreparedStatement requete = connexion.prepRequete(
+                "delete from soigne " +
+                        "where no_docteur = ? and no_malade = ?"
+        );
+
+        requete.setInt(1, numero);
+        requete.setInt(2, malade.getNumero());
+
+        requete.execute();
     }
 
     // - accesseur

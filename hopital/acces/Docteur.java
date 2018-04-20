@@ -145,7 +145,7 @@ public class Docteur extends Employe {
         requete.setInt(1, numero);
 
         // Construction du résultat
-        return Malade.listeMalades(requete.executeQuery());
+        return Malade.listeMalades(requete.executeQuery(), connexion);
     }
 
     // - accesseur

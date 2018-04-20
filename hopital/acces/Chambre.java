@@ -7,6 +7,7 @@ import hopital.connexion.Connexion;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -14,18 +15,20 @@ import java.util.LinkedList;
  *
  * @author julien
  */
-public class Chambre {
+public class Chambre extends DataObject {
     // Attributs
     private int numero;
     private Service service;
     private Infirmier surveillant;
     private int nbLits;
 
+    private boolean modifie = false;
+    private boolean supprime = false;
+
     // Constructeur
-    private Chambre() {
+    protected Chambre() {
 
     }
-
     public Chambre(Service service, int numero, Connexion connexion) throws SQLException {
         // Preparation de la requete
         PreparedStatement requete = connexion.prepRequete(
@@ -45,9 +48,41 @@ public class Chambre {
 
     // Méthodes statiques
     /**
+     * Crée une chambre dans la base de données
+     *
+     * @param service service accueillant la chambre
+     * @param numero numero de la nouvelle chambre
+     * @param surveillant surveillant associé
+     * @param nbLits nombre de lits dans la chambre
+     * @param connexion connexion à la base de données
+     * @return la nouvelle chambre
+     *
+     * @throws SQLException erreur de communication
+     */
+    public static Chambre creerChambre(Service service, int numero, Infirmier surveillant, int nbLits, Connexion connexion) throws SQLException {
+        // Requête
+        PreparedStatement requete = connexion.prepRequete("insert into chambre values (?, ?, ?, ?)");
+        requete.setString(1, service.getCode());
+        requete.setInt(2, numero);
+        requete.setInt(3, surveillant.getNumero());
+        requete.setInt(4, nbLits);
+
+        requete.execute();
+
+        // Création de l'objet
+        Chambre chambre = new Chambre();
+        chambre.numero = numero;
+        chambre.service = service;
+        chambre.surveillant = surveillant;
+        chambre.nbLits = nbLits;
+
+        return chambre;
+    }
+
+    /**
      * Récupère toutes les chambres !
      *
-     * @param connexion connexionECE à la base de donnée
+     * @param connexion connexion à la base de donnée
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -72,29 +107,19 @@ public class Chambre {
      * @throws SQLException erreur dans le resultat donné
      */
     public static LinkedList<Chambre> listeChambres(ResultSet resultSet, Connexion connexion) throws SQLException {
-        LinkedList<Chambre> chambres = new LinkedList<>();
-
-        resultSet.beforeFirst();
-        while (resultSet.next()) {
-            Chambre chambre = new Chambre();
-            chambre.remplir(resultSet, connexion);
-
-            chambres.addLast(chambre);
+        try {
+            return listeObjets(Chambre.class, resultSet, connexion);
+        } catch (IllegalAccessException | InstantiationException e) {
+            // N'arrive pas !
+            e.printStackTrace();
         }
 
-        return chambres;
+        return new LinkedList<>();
     }
 
     // Méthodes
-    /**
-     * Remplit l'objet avec les champs de la requete
-     *
-     * @param resultSet resultat d'une recherche.
-     * @param connexion connexionECE à la base de donnée (objets liés)
-     *
-     * @throws SQLException erreur de communication avec la base de données
-     */
-    private void remplir(ResultSet resultSet, Connexion connexion) throws SQLException {
+    @Override
+    protected void remplir(ResultSet resultSet, Connexion connexion) throws SQLException {
         remplir(resultSet, new Service(resultSet.getString("code_service"), connexion), connexion);
     }
 
@@ -103,7 +128,7 @@ public class Chambre {
      *
      * @param resultSet resultat d'une recherche.
      * @param service service contenant la chambre
-     * @param connexion connexionECE à la base de donnée (objets liés)
+     * @param connexion connexion à la base de donnée (objets liés)
      *
      * @throws SQLException erreur de communication avec la base de données
      */
@@ -126,7 +151,48 @@ public class Chambre {
         return String.format("<Chambre n°%02d %s : %d lits, surv = %s %s>", numero, service.getNom(), nbLits, surveillant.getPrenom(), surveillant.getNom());
     }
 
+    @Override
+    public void sauver(Connexion connexion) throws SQLException {
+        // Gardien
+        if (!modifie) return;
+        if (supprime) return;
+
+        // Requête
+        PreparedStatement requete = connexion.prepRequete(
+                "update chambre " +
+                        "set surveillant=?, nb_lits=? " +
+                        "where code_service like ? and no_chambre = ?"
+        );
+
+        requete.setInt(1, surveillant.getNumero());
+        requete.setInt(2, nbLits);
+        requete.setString(3, service.getCode());
+        requete.setInt(4, numero);
+
+        requete.execute();
+        modifie = false;
+    }
+
+    @Override
+    public void supprimer(Connexion connexion) throws SQLException {
+        // Gardien
+        if (supprime) return;
+
+        // Requête
+        PreparedStatement requete = connexion.prepRequete(
+                "delete from chambre " +
+                        "where code_service like ? and no_chambre = ?"
+        );
+
+        requete.setString(1, service.getCode());
+        requete.setInt(2, numero);
+
+        requete.execute();
+        supprime = true;
+    }
+
     // - accesseurs
+    // champs de la clé primaire
     public int getNumero() {
         return numero;
     }
@@ -136,12 +202,21 @@ public class Chambre {
         return service;
     }
 
+    // autres champs
     @Nullable
     public Infirmier getSurveillant() {
         return surveillant;
     }
+    public void setSurveillant(Infirmier surveillant) {
+        this.surveillant = surveillant;
+        modifie = true;
+    }
 
     public int getNbLits() {
         return nbLits;
+    }
+    public void setNbLits(int nbLits) {
+        this.nbLits = nbLits;
+        modifie = true;
     }
 }

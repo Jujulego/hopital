@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
-public class Service {
+public class Service extends DataObject {
     // Attributs
     private String code;
     private String nom;
@@ -45,6 +45,28 @@ public class Service {
     }
 
     // Méthodes statiques
+    public static Service creerService(String code, String nom, String batiment, Docteur directeur, Connexion connexion) throws SQLException {
+        // Requête
+        PreparedStatement requete = connexion.prepRequete(
+                "insert into service values (?, ?, ?, ?)"
+        );
+        requete.setString(1, code);
+        requete.setString(2, nom);
+        requete.setString(3, batiment);
+        requete.setInt(4, directeur.getNumero());
+
+        requete.execute();
+
+        // Création de l'objet
+        Service service = new Service();
+        service.code = code;
+        service.nom = nom;
+        service.directeur = directeur;
+        service.batiment = batiment;
+
+        return service;
+    }
+
     /**
      * Récupère un service à partir de son nom
      *
@@ -87,17 +109,27 @@ public class Service {
         );
 
         // Construction du résultat
-        LinkedList<Service> services = new LinkedList<>();
+        return listeServices(resultSet, connexion);
+    }
 
-        resultSet.beforeFirst();
-        while (resultSet.next()) {
-            Service service = new Service();
-            service.remplir(resultSet, connexion);
-
-            services.addLast(service);
+    /**
+     * Construit une liste de services
+     *
+     * @param resultSet resultat d'une requete
+     * @param connexion pour récupérer les objets liés
+     * @return liste de chambres
+     *
+     * @throws SQLException erreur dans le resultat donné
+     */
+    public static LinkedList<Service> listeServices(ResultSet resultSet, Connexion connexion) throws SQLException {
+        try {
+            return listeObjets(Service.class, resultSet, connexion);
+        } catch (IllegalAccessException | InstantiationException e) {
+            // N'arrive pas !
+            e.printStackTrace();
         }
 
-        return services;
+        return new LinkedList<>();
     }
 
     // Méthodes
@@ -108,7 +140,8 @@ public class Service {
      *
      * @throws SQLException erreur de communication avec la base de données
      */
-    private void remplir(ResultSet resultSet, Connexion connexion) throws SQLException {
+    @Override
+    protected void remplir(ResultSet resultSet, Connexion connexion) throws SQLException {
         code     = resultSet.getString("code");
         nom      = resultSet.getString("nom");
         batiment = resultSet.getString("batiment");
@@ -130,6 +163,52 @@ public class Service {
         return str;
     }
 
+    @Override
+    public void sauver(Connexion connexion) throws SQLException {
+        // Gardien
+        if (!modifie) return;
+        if (supprime) return;
+
+        // Requête
+        PreparedStatement requete = connexion.prepRequete(
+                "update service " +
+                        "set batiment=?, directeur=? " +
+                        "where code like ?"
+        );
+
+        requete.setString(1, batiment);
+        requete.setInt(2, directeur.getNumero());
+        requete.setString(3, code);
+
+        requete.execute();
+        modifie = false;
+    }
+
+    @Override
+    public void supprimer(Connexion connexion) throws SQLException {
+        // Gardien
+        if (supprime) return;
+
+        // Requête
+        PreparedStatement requete = connexion.prepRequete(
+                "delete from service " +
+                        "where code like ?"
+        );
+
+        requete.setString(1, code);
+
+        requete.execute();
+        supprime = true;
+    }
+
+    /**
+     * Renvoie la liste des chambres liées à ce service
+     *
+     * @param connexion connexion à la base de données
+     * @return la liste des chambres
+     *
+     * @throws SQLException erreur de communication
+     */
     public LinkedList<Chambre> getChambres(Connexion connexion) throws SQLException {
         // Requete
         PreparedStatement requete = connexion.prepRequete(
@@ -147,15 +226,25 @@ public class Service {
     public String getCode() {
         return code;
     }
+
     public String getNom() {
         return nom;
     }
+
     public String getBatiment() {
         return batiment;
+    }
+    public void setBatiment(String batiment) {
+        this.batiment = batiment;
+        modifie = true;
     }
 
     @Nullable
     public Docteur getDirecteur() {
         return directeur;
+    }
+    public void setDirecteur(Docteur directeur) {
+        this.directeur = directeur;
+        modifie = true;
     }
 }

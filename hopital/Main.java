@@ -3,6 +3,7 @@ package hopital;
 import com.jcraft.jsch.JSchException;
 import hopital.acces.Chambre;
 import hopital.connexion.Connexion;
+import hopital.graphismes.Fenetre;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

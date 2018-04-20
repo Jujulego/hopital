@@ -271,10 +271,8 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         }
         if(a.equals("Patient"))
         {
-            System.out.println("AZAZAZAZ");
-            ListeMetier_personne.removeAllElements();
-            j2_specification.removeAll();
-            j3_info.removeAll();
+            ListeMetier_personne.clear();
+            ListeInfo.clear();
 
             getContentPane().validate();
             getContentPane().repaint();

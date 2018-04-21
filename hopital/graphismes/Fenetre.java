@@ -38,6 +38,8 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
     private JPanel panoramix;
     private JPanel jour_nuit;
+    private JPanel panel_recherche;
+    private JPanel panel_scroll;
 
     private JButton option1;
     private JButton option2;
@@ -90,8 +92,15 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         jour_nuit=new JPanel();
         jour_nuit.setLayout(new FlowLayout());
 
+        panel_recherche=new JPanel();
+        panel_recherche.setLayout(new FlowLayout());
+
+        panel_scroll=new JPanel();
+        panel_scroll.setLayout(new FlowLayout());
+
+
         panoramix=new JPanel();
-        panoramix.setLayout(new BorderLayout());
+        panoramix.setLayout(new FlowLayout());
         panoramix.setBackground(Color.BLUE);
 
         recherhe_spe=new JTextField("Rechercher une personne en particulier");
@@ -277,18 +286,22 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         bouton_recherche=new JButton("Rechercher");
         bouton_recherche.addActionListener(this);
 
+        panel_scroll.add(scroll);
+        panel_scroll.add(scroll2);
+        panel_scroll.add(scroll3);
+        panel_scroll.add(scroll4);
+
+        panel_recherche.add(recherhe_spe);
+        panel_recherche.add(bouton_recherche);
+
+
         jour_nuit.add(jour);
         jour_nuit.add(nuit);
 
-        panoramix.add(scroll,BorderLayout.WEST);
-        panoramix.add(scroll2,BorderLayout.CENTER);
-        panoramix.add(scroll3,BorderLayout.EAST);
 
-        panoramix.add(scroll4,BorderLayout.SOUTH);
-        panoramix.add(jour_nuit,BorderLayout.SOUTH);
-        panoramix.add(recherhe_spe, BorderLayout.SOUTH);
-        panoramix.add(bouton_recherche, BorderLayout.SOUTH);
-
+        panoramix.add(panel_scroll,FlowLayout.LEFT);
+        panoramix.add(jour_nuit,FlowLayout.CENTER);
+        panoramix.add(panel_recherche,FlowLayout.RIGHT);
 
 
 

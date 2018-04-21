@@ -36,36 +36,44 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     ConnexionThread connexionThread;
     Connexion connexion;
 
-    JPanel panoramix;
-    JPanel jour_nuit;
+    private JPanel panoramix;
+    private JPanel jour_nuit;
 
-    JButton option1;
-    JButton option2;
-    JButton option3;
+    private JButton option1;
+    private JButton option2;
+    private JButton option3;
+    private JButton bouton_recherche;
 
-    JCheckBox jour;
-    JCheckBox nuit;
+    private JCheckBox jour;
+    private JCheckBox nuit;
 
-    JList<String> j1_metier;
-    JList<String> j2_specification;
-    JList<String> j3_info;
+    private JTextField recherhe_spe;
 
-    JScrollPane scroll;
-    JScrollPane scroll2;
-    JScrollPane scroll3;
+    private JList<String> j1_metier;
+    private JList<String> j2_specification;
+    private JList<String> j3_info;
+    private JList<String> j4_recherche;
+
+
+    private JScrollPane scroll;
+    private JScrollPane scroll2;
+    private JScrollPane scroll3;
+    private JScrollPane scroll4;
 
 
     //j1_metier
-    DefaultListModel<String> trois_metier = new DefaultListModel<>();
+    private DefaultListModel<String> trois_metier = new DefaultListModel<>();
 
     //j2_specification
-    DefaultListModel<String> ListeMetier_docteur= new DefaultListModel<>();
-    DefaultListModel<String> ListeMetier_infirmier= new DefaultListModel<>();
-    DefaultListModel<String> ListeMetier_personne= new DefaultListModel<>();
+    private DefaultListModel<String> ListeMetier_docteur= new DefaultListModel<>();
+    private DefaultListModel<String> ListeMetier_infirmier= new DefaultListModel<>();
+    private DefaultListModel<String> ListeMetier_personne= new DefaultListModel<>();
 
     //j3_info
-    DefaultListModel<String> ListeInfo = new DefaultListModel<>();
+    private DefaultListModel<String> ListeInfo = new DefaultListModel<>();
 
+    //j4 pour afficher les recherches en particulier
+    private DefaultListModel<String> ListeRecherche = new DefaultListModel<>();
 
     // Constructeur
     public Fenetre() {
@@ -84,7 +92,10 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         panoramix=new JPanel();
         panoramix.setLayout(new BorderLayout());
-        panoramix.setBackground(Color.GREEN);
+        panoramix.setBackground(Color.BLUE);
+
+        recherhe_spe=new JTextField("Rechercher une personne en particulier");
+        recherhe_spe.setSize(200,50);
 
 
 
@@ -207,8 +218,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
-            //option1.setEnabled(false);
-
         }
 
 
@@ -223,9 +232,13 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         }
 
-
         if(Source==option3)
         {
+
+        }
+
+        if(Source==bouton_recherche){
+            rechercher_en_particulier(recherhe_spe.getText());
 
         }
 
@@ -242,8 +255,14 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         j3_info=new JList<>(ListeInfo);
         scroll3=new JScrollPane(j3_info);
 
+        j4_recherche=new JList<>(ListeRecherche);
+        scroll4=new JScrollPane(j4_recherche);
+
+
+
         scroll2.setVisible(false);
         scroll3.setVisible(false);
+        scroll4.setVisible(false);
 
         jour=new JCheckBox("Jour");
         jour.setSelected(false);
@@ -255,13 +274,22 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         nuit.setVisible(false);
         nuit.addItemListener(this);
 
+        bouton_recherche=new JButton("Rechercher");
+        bouton_recherche.addActionListener(this);
+
         jour_nuit.add(jour);
         jour_nuit.add(nuit);
 
         panoramix.add(scroll,BorderLayout.WEST);
         panoramix.add(scroll2,BorderLayout.CENTER);
         panoramix.add(scroll3,BorderLayout.EAST);
+
+        panoramix.add(scroll4,BorderLayout.SOUTH);
         panoramix.add(jour_nuit,BorderLayout.SOUTH);
+        panoramix.add(recherhe_spe, BorderLayout.SOUTH);
+        panoramix.add(bouton_recherche, BorderLayout.SOUTH);
+
+
 
 
 
@@ -297,6 +325,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     public void afficher_j2_specification(String a){
         scroll2.setVisible(true);
         scroll3.setVisible(false);
+        scroll4.setVisible(false);
 
         if(a.equals("Docteur"))
         {
@@ -360,6 +389,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
     public void afficher_j3_info(String a){
         scroll3.setVisible(true);
+        scroll4.setVisible(false);
 
         try {
             LinkedList<Employe> employes = Employe.tousEmployes(connexion);
@@ -370,7 +400,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                 if( (e instanceof Docteur) && ((Docteur) e).getSpecialite().equals(a) )
                 {
                     ListeInfo.addElement(e.toString());
-
                 }
 
 
@@ -382,10 +411,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                     if( (((Infirmier) e).getRotation().equals("NUIT") ) && nuit.isSelected() ){
                         ListeInfo.addElement(e.toString());
                     }
-
                 }
-
-
             }
 
         } catch (SQLException e1) {
@@ -394,6 +420,39 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         getContentPane().validate();
         getContentPane().repaint();
+
+    }
+
+    public void rechercher_en_particulier(String a)
+    {
+        if(!a.equals("") && !a.equals(" ")){
+            ListeRecherche.removeAllElements();
+            scroll4.setVisible(true);
+            try {
+                LinkedList<Employe> employes = Employe.tousEmployes(connexion);
+
+                for(int i=0;i<employes.size();i++){
+                    if(employes.get(i).getAdresse().contains(a) || employes.get(i).getNom().contains(a)  || employes.get(i).getPrenom().contains(a) || employes.get(i).getTelephone().contains(a) || String.valueOf(employes.get(i).getNumero()).contains(a) ){
+                        ListeRecherche.addElement(employes.get(i).toString());
+                    }
+                }
+                if(ListeRecherche.size()==0)
+                {
+                    ListeRecherche.addElement(a + " Non trouvé !");
+                }
+
+
+                getContentPane().validate();
+                getContentPane().repaint();
+
+                recherhe_spe.setText("");
+
+
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        }
+
 
     }
 

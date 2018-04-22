@@ -38,20 +38,24 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     private JPanel panel_scroll;
     private JButton stats = new JButton("Statistiques");
 
-    private JButton option1;
+    //private JButton option1;
     private JButton option2;
     private JButton option3;
     private JButton bouton_recherche;
+    private JButton bouton_ajouter;
 
     private JCheckBox jour;
     private JCheckBox nuit;
 
     private JTextField recherhe_spe;
 
+    private DefaultListModel<JTextField>ajout=new DefaultListModel<>();
+
     private JList<String> j1_metier;
     private JList<String> j2_specification;
     private JList<String> j3_info;
     private JList<String> j4_recherche;
+
 
 
     private JScrollPane scroll;
@@ -76,6 +80,22 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     //j4 pour afficher les recherches en particulier
     private DefaultListModel<String> ListeRecherche = new DefaultListModel<>();
 
+    private JComboBox combo = new JComboBox();
+    private JComboBox combo_spe_doc = new JComboBox();
+    private JComboBox combo_spe_rot = new JComboBox();
+
+    private JPanel jpanel_ajouter = new JPanel();
+
+    private JTextField mutuelle;
+    private JTextField service=new JTextField("Service");;
+
+    JTextField numero=new JTextField("numero");
+    JTextField nom=new JTextField("nom");
+    JTextField prenom=new JTextField("prenom");
+    JTextField telephone=new JTextField("telephone");
+    JTextField adresse=new JTextField("adresse");
+    JTextField salaire=new JTextField("Salaire");
+
     // Constructeur
     public Fenetre() {
         // Paramètres
@@ -86,6 +106,14 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         trois_metier.addElement("Docteur");
         trois_metier.addElement("Infirmier");
         trois_metier.addElement("Patient");
+
+
+        ajout.addElement(new JTextField("numero"));
+        ajout.addElement(new JTextField("numero"));
+        ajout.addElement(new JTextField("nom"));
+        ajout.addElement(new JTextField("prenom"));
+        ajout.addElement(new JTextField("telephone"));
+        ajout.addElement(new JTextField("adresse"));
 
 
         jour_nuit=new JPanel();
@@ -104,6 +132,20 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         recherhe_spe=new JTextField("Rechercher une personne en particulier");
         recherhe_spe.setSize(200,50);
+
+
+        combo.setPreferredSize(new Dimension(100, 20));
+        combo.addItem("Docteur");
+        combo.addItem("Infirmier");
+        combo.addItem("Malade");
+
+
+
+        jpanel_ajouter.add(numero);
+        jpanel_ajouter.add(nom);
+        jpanel_ajouter.add(prenom);
+        jpanel_ajouter.add(telephone);
+        jpanel_ajouter.add(adresse);
 
 
 
@@ -154,18 +196,20 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         this.connexion = connexion;
         connexionDialog.setVisible(false);
 
-        option1=new JButton("Mise a jour");
+        //option1=new JButton("Mise a jour");
         option2=new JButton("Recherche");
         option3=new JButton("Generation");
 
+
+
         setLayout(new FlowLayout(FlowLayout.CENTER, 8, 8));
-        add(option1);
+        //add(option1);
         add(option2);
         add(option3);
         add(stats);
 
 
-        option1.addActionListener(this);
+        //option1.addActionListener(this);
         option2.addActionListener(this);
         option3.addActionListener(this);
 
@@ -227,21 +271,9 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     public void actionPerformed(ActionEvent e) {
         Object Source=e.getSource();
 
-        if(Source==option1)
+        //if(Source==option1)
         {
-            try {
-                LinkedList<Employe> employes = Employe.tousEmployes(connexion);
-                JList<Employe> list = new JList<>(employes.toArray(new Employe[employes.size()]));
 
-                JScrollPane scroll = new JScrollPane(list);
-                add(scroll);
-
-                getContentPane().validate();
-                getContentPane().repaint();
-
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
         }
 
 
@@ -259,11 +291,46 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         if(Source==option3)
         {
 
+            ajouter_personne();
+            System.out.println("option 3");
         }
 
         if(Source==bouton_recherche){
             rechercher_en_particulier(recherhe_spe.getText());
+        }
 
+        if(Source==bouton_ajouter){
+            if(combo.getSelectedItem().toString().equals("Malade")){
+                try{
+                    Malade moliere=Malade.creerMalade(Integer.parseInt(numero.getText()),nom.getText(),prenom.getText(),adresse.getText(),telephone.getText(),mutuelle.getText(), connexion);
+                    }
+                catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+
+            if(combo.getSelectedItem().toString().equals("Docteur")){
+                try{
+                    Docteur nouveau=Docteur.creerDocteur(Integer.parseInt(numero.getText()),nom.getText(),prenom.getText(),adresse.getText(),telephone.getText(),combo_spe_doc.getSelectedItem().toString(), connexion);
+                }
+                catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+
+                }
+/*
+            if(combo.getSelectedItem().toString().equals("Infirmier")){
+                try{
+                    Infirmier bob=Infirmier.creerInfirmier(Integer.parseInt(numero.getText()),nom.getText(),prenom.getText(),adresse.getText(),telephone.getText(),mutuelle.getText(),service.getText(),combo_spe_rot.getSelectedItem().toString(),salaire.getText(), connexion);
+
+                    }
+                catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+            }*/
         }
 
     }
@@ -494,6 +561,111 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
     }
 
+
+    public void ajouter_personne(){
+        String[] choix = {"Docteur", "Infirmier", "Malade"};
+        String[] variable={"Traumatologue" ,"Pneumologue" ,"Cardiologue" ,"Orthopediste" , "Radiologue" ,  "Anesthesiste"};
+        String[] rot={"JOUR","NUIT"};
+        mutuelle=new JTextField("Mutuelle");
+
+        combo = new JComboBox(choix);
+        combo_spe_doc = new JComboBox(variable);
+        combo_spe_rot=new JComboBox(rot);
+
+        combo_spe_doc.addActionListener(new ItemAction());
+        combo_spe_rot.addActionListener(new ItemAction());
+
+        jpanel_ajouter.add(combo_spe_doc);
+        jpanel_ajouter.add(combo_spe_rot);
+        jpanel_ajouter.add(mutuelle);
+        jpanel_ajouter.add(salaire);
+        bouton_ajouter=new JButton("Ajouter personne");
+
+
+        bouton_ajouter.addActionListener(this);
+
+        combo_spe_rot.setVisible(false);
+        mutuelle.setVisible(false);
+        salaire.setVisible(false);
+        service.setVisible(false);
+
+
+
+        jpanel_ajouter.setLayout(new FlowLayout());
+        jpanel_ajouter.add(combo);
+        jpanel_ajouter.add(combo_spe_doc);
+        jpanel_ajouter.add(bouton_ajouter);
+        jpanel_ajouter.add(service);
+
+        this.setContentPane(jpanel_ajouter);
+        this.setVisible(true);
+
+        combo.addActionListener(new ItemAction());
+
+        System.out.println("ahaha:" + combo.getSelectedItem());
+
+
+        validate();
+        repaint();
+
+    }
+
+
+    public void ajouter_doc()
+    {
+        combo_spe_rot.setVisible(false);
+        combo_spe_doc.setVisible(true);
+        mutuelle.setVisible(false);
+        service.setVisible(false);
+
+
+        validate();
+        repaint();
+    }
+
+    public void ajouter_inf()
+    {
+        combo_spe_doc.setVisible(false);
+        mutuelle.setVisible(false);
+        combo_spe_rot.setVisible(true);
+        salaire.setVisible(true);
+        service.setVisible(true);
+
+
+        validate();
+        repaint();
+
+    }
+
+    public void ajouter_mal()
+    {
+        combo_spe_doc.setVisible(false);
+        combo_spe_rot.setVisible(false);
+
+        mutuelle.setVisible(true);
+        service.setVisible(false);
+
+
+
+    }
+
+
+    class ItemAction implements ActionListener{
+        public void actionPerformed(ActionEvent e) {
+            if(String.valueOf(combo.getSelectedItem()).equals("Docteur"))
+            {
+                ajouter_doc();
+            }
+            if(String.valueOf(combo.getSelectedItem()).equals("Infirmier"))
+            {
+                ajouter_inf();
+            }
+            if(String.valueOf(combo.getSelectedItem()).equals("Malade"))
+            {
+                ajouter_mal();
+            }
+        }
+    }
 
 
 }

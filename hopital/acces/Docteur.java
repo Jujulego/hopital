@@ -68,7 +68,7 @@ public class Docteur extends Employe {
     }
 
     // Méthodes statiques
-    public static Docteur creerDocteur(int numero, String nom, String prenom, String adresse, String telephone, String mutuelle, String specialite, Connexion connexion) throws SQLException {
+    public static Docteur creerDocteur(int numero, String nom, String prenom, String adresse, String telephone, String specialite, Connexion connexion) throws SQLException {
         // Requête
         PreparedStatement requete = connexion.prepRequete("insert into employe values (?, ?, ?, ?, ?)");
         requete.setInt(1, numero);

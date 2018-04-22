@@ -21,7 +21,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.awt.Graphics;
 import java.util.LinkedList;
 
 import java.util.List;
@@ -40,6 +39,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     private JPanel jour_nuit;
     private JPanel panel_recherche;
     private JPanel panel_scroll;
+    private JButton stats = new JButton("Statistiques");
 
     private JButton option1;
     private JButton option2;
@@ -116,6 +116,17 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         connexionDialog.setLocationRelativeTo(this);
         connexionDialog.ajouterConnexionListener(this);
 
+        stats.addActionListener((ActionEvent event) -> {
+            new Statistiques(connexion);
+            this.dispose();
+        });
+    }
+
+    public Fenetre(Connexion connexion) {
+        this();
+
+        connexionDialog.dispose();
+        connexionReussie(connexion);
     }
 
     // Méthodes
@@ -153,6 +164,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         add(option1);
         add(option2);
         add(option3);
+        add(stats);
 
 
         option1.addActionListener(this);

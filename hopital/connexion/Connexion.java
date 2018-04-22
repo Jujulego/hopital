@@ -1,7 +1,6 @@
 package hopital.connexion;
 
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,18 +22,27 @@ public class Connexion {
      * @param nameDatabase nom de la base locale
      * @param loginDatabase identifiant de connexionECE au serveur de base de données
      * @param passwordDatabase mot de passe associé
+     * @param distant connexion à distance
      *
      * @throws java.lang.ClassNotFoundException en cas d'absence du driver
      */
-    public Connexion(String nameDatabase, String loginDatabase, String passwordDatabase) throws SQLException, ClassNotFoundException {
+    public Connexion(String nameDatabase, String loginDatabase, String passwordDatabase, boolean distant) throws SQLException, ClassNotFoundException {
         // Chargement driver "com.mysql.jdbc.Driver"
         Class.forName("com.mysql.jdbc.Driver");
+        Class.forName("org.postgresql.Driver");
 
         // Connexion à la base de données
-        conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost/" + nameDatabase,
-                loginDatabase, passwordDatabase
-        );
+        if (distant) {
+            conn = DriverManager.getConnection(
+                    "jdbc:postgresql://www.capellari.net/" + nameDatabase,
+                    loginDatabase, passwordDatabase
+            );
+        } else {
+            conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost/" + nameDatabase,
+                    loginDatabase, passwordDatabase
+            );
+        }
     }
 
     /**
@@ -95,7 +103,7 @@ public class Connexion {
      * @throws java.sql.SQLException erreur d'accès à la base
      */
     public ResultSet execSelect(String sql) throws SQLException {
-        return conn.createStatement().executeQuery(sql);
+        return conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(sql);
     }
 
     /**
@@ -107,7 +115,7 @@ public class Connexion {
      * @throws java.sql.SQLException erreur d'accès à la base
      */
     public int execModif(String sql) throws SQLException {
-        return conn.createStatement().executeUpdate(sql);
+        return conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeUpdate(sql);
     }
 
     /**
@@ -118,7 +126,7 @@ public class Connexion {
      * @throws java.sql.SQLException erreur d'accès à la base
      */
     public PreparedStatement prepRequete(String sql) throws SQLException {
-        return conn.prepareStatement(sql);
+        return conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     }
 
     /**

@@ -133,8 +133,8 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     @Override
     public void connexionECE(String utilisateur, char[] motDePasse) {
         connexionThread = new ConnexionThread(
-                utilisateur, new String(motDePasse),
-                "jc151870", "YDRyIxgl"
+                "hopital",
+                utilisateur, new String(motDePasse), true
         );
         connexionThread.ajouterConnexionListener(this);
         connexionThread.start();
@@ -144,7 +144,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     public void connexionLocale() {
         connexionThread = new ConnexionThread(
                 "hopital",
-                "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57"
+                "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57", false
         );
         connexionThread.ajouterConnexionListener(this);
         connexionThread.start();

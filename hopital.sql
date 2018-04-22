@@ -7,7 +7,7 @@ create table employe (
         prenom varchar (12) not null,
         adresse varchar (40),
         tel char (14),
-        unique key (nom, prenom, tel) ) ;
+        unique (nom, prenom, tel) ) ;
 
 insert into employe values
         (19,'Safin','Marat','61 rue Fermee, 78430 Louveciennes','01 06 70 38 90'),
@@ -73,15 +73,17 @@ insert into employe values
         (50,'Parmentier','Pauline','4 place des Tanneurs, 78130 Les Mureaux','01 80 53 13 30'),
         (27,'Spadea','Vincent','32 place des Cardeurs, 78000 Versailles','01 55 54 51 79') ;
 
+create type SPE as enum('Anesthesiste',
+                        'Cardiologue',
+                        'Generaliste',
+                        'Orthopediste',
+                        'Pneumologue',
+                        'Radiologue',
+                        'Traumatologue');
+
 create table docteur (
         numero decimal (4) primary key,
-        specialite enum ('Anesthesiste',
-                         'Cardiologue',
-                         'Generaliste',
-                         'Orthopediste',
-                         'Pneumologue',
-                         'Radiologue',
-                         'Traumatologue') default 'Generaliste' not null,
+        specialite SPE default 'Generaliste' not null,
         foreign key (numero) references employe (numero) on delete cascade on update cascade ) ;
 
 insert into docteur values
@@ -122,7 +124,7 @@ insert into docteur values
 
 create table service (
         code char (3) primary key,
-        nom varchar (30) not null unique key,
+        nom varchar (30) not null unique,
         batiment char (1) not null,
         directeur decimal (4),
         foreign key (directeur) references docteur (numero) on delete set null on update cascade ) ;
@@ -132,10 +134,11 @@ insert into service values
         ('CHG','Chirurgie generale','A',34),
         ('CAR','Cardiologie','B',80) ;
 
+create type ROT as enum ('JOUR', 'NUIT');
 create table infirmier (
         numero decimal (4) primary key,
         code_service char (3),
-        rotation enum ('JOUR', 'NUIT') not null default 'JOUR',
+        rotation ROT not null default 'JOUR',
         salaire decimal (6,2),
         foreign key (numero) references employe (numero) on delete cascade on update cascade,
         foreign key (code_service) references service (code) on delete set null on update cascade ) ;
@@ -216,7 +219,7 @@ create table malade (
         adresse varchar (40),
         tel char (14),
         mutuelle varchar (6),
-        unique key (nom, prenom, tel) ) ;
+        unique (nom, prenom, tel) ) ;
 
 insert into malade values
         (1,'Querrey','Sam','43 rue Vauvenargues, 78000 Versailles','01 52 53 23 82','MNAM'),
@@ -307,7 +310,7 @@ create table hospitalisation (
         code_service char (3) not null,
         no_chambre decimal (3) not null,
         lit decimal (2),
-        unique key (code_service, no_chambre, lit),
+        unique (code_service, no_chambre, lit),
         foreign key (no_malade) references malade (numero) on delete cascade on update cascade,
         foreign key (code_service) references service (code) on delete cascade on update cascade,
         foreign key (code_service, no_chambre) references chambre (code_service, no_chambre) on delete cascade on update cascade ) ;

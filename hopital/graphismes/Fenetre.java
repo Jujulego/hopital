@@ -18,7 +18,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.awt.Graphics;
 import java.util.LinkedList;
 
 import java.util.List;
@@ -37,6 +36,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     private JPanel jour_nuit;
     private JPanel panel_recherche;
     private JPanel panel_scroll;
+    private JButton stats = new JButton("Statistiques");
 
     private JButton option1;
     private JButton option2;
@@ -115,14 +115,25 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         connexionDialog.setLocationRelativeTo(this);
         connexionDialog.ajouterConnexionListener(this);
 
+        stats.addActionListener((ActionEvent event) -> {
+            new Statistiques(connexion);
+            this.dispose();
+        });
+    }
+
+    public Fenetre(Connexion connexion) {
+        this();
+
+        connexionDialog.dispose();
+        connexionReussie(connexion);
     }
 
     // Méthodes
     @Override
     public void connexionECE(String utilisateur, char[] motDePasse) {
         connexionThread = new ConnexionThread(
-                utilisateur, new String(motDePasse),
-                "jc151870", "YDRyIxgl"
+                "hopital",
+                utilisateur, new String(motDePasse), true
         );
         connexionThread.ajouterConnexionListener(this);
         connexionThread.start();
@@ -132,7 +143,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     public void connexionLocale() {
         connexionThread = new ConnexionThread(
                 "hopital",
-                "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57"
+                "hopital", "pm1caalceymgpv0vm7lprg8ipfknux57", false
         );
         connexionThread.ajouterConnexionListener(this);
         connexionThread.start();
@@ -151,6 +162,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         add(option1);
         add(option2);
         add(option3);
+        add(stats);
 
 
         option1.addActionListener(this);

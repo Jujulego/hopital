@@ -16,9 +16,10 @@ public class ConnexionThread extends Thread {
     private String nameDatabase;
     private String loginDatabase;
     private String passwordDatabase;
+    private boolean distant;
 
     // Connexion
-    public ConnexionThread(String nameDatabase, String loginDatabase, String passwordDatabase) {
+    public ConnexionThread(String nameDatabase, String loginDatabase, String passwordDatabase, boolean distant) {
         // Type de connxion
         this.connexionECE = false;
 
@@ -26,6 +27,7 @@ public class ConnexionThread extends Thread {
         this.nameDatabase = nameDatabase;
         this.loginDatabase = loginDatabase;
         this.passwordDatabase = passwordDatabase;
+        this.distant = distant;
     }
 
     public ConnexionThread(String usernameECE, String passwordECE, String loginDatabase, String passwordDatabase) {
@@ -47,7 +49,7 @@ public class ConnexionThread extends Thread {
             if (connexionECE) {
                 connexion = new Connexion(usernameECE, passwordECE, loginDatabase, passwordDatabase);
             } else {
-                connexion = new Connexion(nameDatabase, loginDatabase, passwordDatabase);
+                connexion = new Connexion(nameDatabase, loginDatabase, passwordDatabase, distant);
             }
 
             // listeners

@@ -36,36 +36,46 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     ConnexionThread connexionThread;
     Connexion connexion;
 
-    JButton option1;
-    JButton option2;
-    JButton option3;
+    private JPanel panoramix;
+    private JPanel jour_nuit;
+    private JPanel panel_recherche;
+    private JPanel panel_scroll;
 
-    JCheckBox jour;
-    JCheckBox nuit;
+    private JButton option1;
+    private JButton option2;
+    private JButton option3;
+    private JButton bouton_recherche;
 
-    JList<String> j1_metier;
-    JList<String> j2_specification;
-    JList<String> j3_info;
+    private JCheckBox jour;
+    private JCheckBox nuit;
 
-    JScrollPane scroll;
-    JScrollPane scroll2;
-    JScrollPane scroll3;
+    private JTextField recherhe_spe;
+
+    private JList<String> j1_metier;
+    private JList<String> j2_specification;
+    private JList<String> j3_info;
+    private JList<String> j4_recherche;
 
 
-
+    private JScrollPane scroll;
+    private JScrollPane scroll2;
+    private JScrollPane scroll3;
+    private JScrollPane scroll4;
 
 
     //j1_metier
-    DefaultListModel<String> trois_metier = new DefaultListModel<>();
+    private DefaultListModel<String> trois_metier = new DefaultListModel<>();
 
     //j2_specification
-    DefaultListModel<String> ListeMetier_docteur= new DefaultListModel<>();
-    DefaultListModel<String> ListeMetier_infirmier= new DefaultListModel<>();
-    DefaultListModel<String> ListeMetier_personne= new DefaultListModel<>();
+    private DefaultListModel<String> ListeMetier_docteur= new DefaultListModel<>();
+    private DefaultListModel<String> ListeMetier_infirmier= new DefaultListModel<>();
+    private DefaultListModel<String> ListeMetier_personne= new DefaultListModel<>();
 
     //j3_info
-    DefaultListModel<String> ListeInfo = new DefaultListModel<>();
+    private DefaultListModel<String> ListeInfo = new DefaultListModel<>();
 
+    //j4 pour afficher les recherches en particulier
+    private DefaultListModel<String> ListeRecherche = new DefaultListModel<>();
 
     // Constructeur
     public Fenetre() {
@@ -73,15 +83,38 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         setSize(1080, 760);
         setVisible(true);
 
-        // Activation de la boite de dialogue
-        connexionDialog.setVisible(true);
-        connexionDialog.setLocationRelativeTo(this);
-        connexionDialog.ajouterConnexionListener(this);
-
         //Chargement des listes
         trois_metier.addElement("Docteur");
         trois_metier.addElement("Infirmier");
         trois_metier.addElement("Patient");
+
+
+        jour_nuit=new JPanel();
+        jour_nuit.setLayout(new FlowLayout());
+
+        panel_recherche=new JPanel();
+        panel_recherche.setLayout(new FlowLayout());
+
+        panel_scroll=new JPanel();
+        panel_scroll.setLayout(new FlowLayout());
+
+
+        panoramix=new JPanel();
+        panoramix.setLayout(new FlowLayout());
+        panoramix.setBackground(Color.BLUE);
+
+        recherhe_spe=new JTextField("Rechercher une personne en particulier");
+        recherhe_spe.setSize(200,50);
+
+
+
+        this.setContentPane(panoramix);
+        this.setVisible(true);
+
+        // Activation de la boite de dialogue
+        connexionDialog.setVisible(true);
+        connexionDialog.setLocationRelativeTo(this);
+        connexionDialog.ajouterConnexionListener(this);
 
     }
 
@@ -120,6 +153,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         add(option1);
         add(option2);
         add(option3);
+
 
         option1.addActionListener(this);
         option2.addActionListener(this);
@@ -193,8 +227,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
-            //option1.setEnabled(false);
-
         }
 
 
@@ -209,9 +241,13 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
         }
 
-
         if(Source==option3)
         {
+
+        }
+
+        if(Source==bouton_recherche){
+            rechercher_en_particulier(recherhe_spe.getText());
 
         }
 
@@ -228,20 +264,47 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         j3_info=new JList<>(ListeInfo);
         scroll3=new JScrollPane(j3_info);
 
+        j4_recherche=new JList<>(ListeRecherche);
+        scroll4=new JScrollPane(j4_recherche);
+
+
+
         scroll2.setVisible(false);
         scroll3.setVisible(false);
+        scroll4.setVisible(false);
 
         jour=new JCheckBox("Jour");
         jour.setSelected(false);
         jour.setVisible(false);
-        add(jour);
         jour.addItemListener(this);
 
         nuit= new JCheckBox("Nuit");
         nuit.setSelected(false);
         nuit.setVisible(false);
-        add(nuit);
         nuit.addItemListener(this);
+
+        bouton_recherche=new JButton("Rechercher");
+        bouton_recherche.addActionListener(this);
+
+        panel_scroll.add(scroll);
+        panel_scroll.add(scroll2);
+        panel_scroll.add(scroll3);
+        panel_scroll.add(scroll4);
+
+        panel_recherche.add(recherhe_spe);
+        panel_recherche.add(bouton_recherche);
+
+
+        jour_nuit.add(jour);
+        jour_nuit.add(nuit);
+
+
+        panoramix.add(panel_scroll,FlowLayout.LEFT);
+        panoramix.add(jour_nuit,FlowLayout.CENTER);
+        panoramix.add(panel_recherche,FlowLayout.RIGHT);
+
+
+
 
 
 
@@ -268,7 +331,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             }
         });
 
-        add(scroll);
         getContentPane().validate();
         getContentPane().repaint();
     }
@@ -276,6 +338,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     public void afficher_j2_specification(String a){
         scroll2.setVisible(true);
         scroll3.setVisible(false);
+        scroll4.setVisible(false);
 
         if(a.equals("Docteur"))
         {
@@ -301,6 +364,9 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         {
             ListeMetier_personne.clear();
             ListeInfo.clear();
+
+            nuit.setVisible(false);
+            jour.setVisible(false);
 
             getContentPane().validate();
             getContentPane().repaint();
@@ -328,10 +394,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             }
         });
 
-
-
-        add(scroll2);
-
         getContentPane().validate();
         getContentPane().repaint();
 
@@ -340,6 +402,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
     public void afficher_j3_info(String a){
         scroll3.setVisible(true);
+        scroll4.setVisible(false);
 
         try {
             LinkedList<Employe> employes = Employe.tousEmployes(connexion);
@@ -350,7 +413,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                 if( (e instanceof Docteur) && ((Docteur) e).getSpecialite().equals(a) )
                 {
                     ListeInfo.addElement(e.toString());
-
                 }
 
 
@@ -362,30 +424,50 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                     if( (((Infirmier) e).getRotation().equals("NUIT") ) && nuit.isSelected() ){
                         ListeInfo.addElement(e.toString());
                     }
-
                 }
-
-
             }
 
         } catch (SQLException e1) {
             e1.printStackTrace();
         }
 
-        //j3_info.setModel(a_afficher);
-
-        add(scroll3);
-
         getContentPane().validate();
         getContentPane().repaint();
 
-
     }
 
+    public void rechercher_en_particulier(String a)
+    {
+        if(!a.equals("") && !a.equals(" ")){
+            ListeRecherche.removeAllElements();
+            scroll4.setVisible(true);
+            try {
+                LinkedList<Employe> employes = Employe.tousEmployes(connexion);
+
+                for(int i=0;i<employes.size();i++){
+                    if(employes.get(i).getAdresse().contains(a) || employes.get(i).getNom().contains(a)  || employes.get(i).getPrenom().contains(a) || employes.get(i).getTelephone().contains(a) || String.valueOf(employes.get(i).getNumero()).contains(a) ){
+                        ListeRecherche.addElement(employes.get(i).toString());
+                    }
+                }
+                if(ListeRecherche.size()==0)
+                {
+                    ListeRecherche.addElement(a + " Non trouvé !");
+                }
 
 
+                getContentPane().validate();
+                getContentPane().repaint();
+
+                recherhe_spe.setText("");
 
 
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        }
+
+
+    }
 
 
 

@@ -1,10 +1,7 @@
 package hopital.graphismes;
 
 import com.jcraft.jsch.JSchException;
-import hopital.acces.Docteur;
-import hopital.acces.Employe;
-import hopital.acces.Infirmier;
-import hopital.acces.Service;
+import hopital.acces.*;
 import hopital.connexion.Connexion;
 import hopital.connexion.ConnexionThread;
 
@@ -70,6 +67,8 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
     private DefaultListModel<String> ListeMetier_docteur= new DefaultListModel<>();
     private DefaultListModel<String> ListeMetier_infirmier= new DefaultListModel<>();
     private DefaultListModel<String> ListeMetier_personne= new DefaultListModel<>();
+
+    private DefaultListModel<String> Liste_Patient= new DefaultListModel<>();
 
     //j3_info
     private DefaultListModel<String> ListeInfo = new DefaultListModel<>();
@@ -144,7 +143,6 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         this.connexion = connexion;
         connexionDialog.setVisible(false);
 
-        //Ben caca
         option1=new JButton("Mise a jour");
         option2=new JButton("Recherche");
         option3=new JButton("Generation");
@@ -172,6 +170,11 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
             while(requete_liste_metier_docteur.next())
             {
                 ListeMetier_docteur.addElement(requete_liste_metier_docteur.getString("specialite"));
+            }
+
+            LinkedList<Malade>Tous_malade= Malade.tousMalades(connexion);
+            for(Malade m_malade:Tous_malade){
+                Liste_Patient.addElement(m_malade.toString());
             }
 
         } catch (SQLException e) {
@@ -362,8 +365,10 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
         }
         if(a.equals("Patient"))
         {
-            ListeMetier_personne.clear();
-            ListeInfo.clear();
+            for(int i=0;i<Liste_Patient.size();i++)
+            {
+                ListeMetier_personne.addElement(Liste_Patient.getElementAt(i));
+            }
 
             nuit.setVisible(false);
             jour.setVisible(false);
@@ -401,7 +406,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
 
 
     public void afficher_j3_info(String a){
-        scroll3.setVisible(true);
+
         scroll4.setVisible(false);
 
         try {
@@ -413,6 +418,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                 if( (e instanceof Docteur) && ((Docteur) e).getSpecialite().equals(a) )
                 {
                     ListeInfo.addElement(e.toString());
+                    scroll3.setVisible(true);
                 }
 
 
@@ -424,6 +430,7 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                     if( (((Infirmier) e).getRotation().equals("NUIT") ) && nuit.isSelected() ){
                         ListeInfo.addElement(e.toString());
                     }
+                    scroll3.setVisible(true);
                 }
             }
 
@@ -449,6 +456,12 @@ public class Fenetre extends JFrame implements ConnexionECEDialog.ConnexionListe
                         ListeRecherche.addElement(employes.get(i).toString());
                     }
                 }
+                LinkedList<Malade>Tous_malade= Malade.tousMalades(connexion);
+                for(Malade m_malade:Tous_malade){
+                    if(String.valueOf(m_malade.getNumero()).contains(a) || m_malade.getNom().contains(a) || m_malade.getPrenom().contains(a) || m_malade.getNom().contains(a)     )
+                    ListeRecherche.addElement(m_malade.toString());
+                }
+
                 if(ListeRecherche.size()==0)
                 {
                     ListeRecherche.addElement(a + " Non trouvé !");

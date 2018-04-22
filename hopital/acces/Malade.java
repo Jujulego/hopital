@@ -111,7 +111,7 @@ public class Malade extends DataObject {
     public static LinkedList<Malade> tousMalades(Connexion connexion) throws SQLException {
         // Requête
         ResultSet resultSet = connexion.execSelect(
-                "select numero,nom,prenom,telephone,adresse,mutuelle " +
+                "select numero,nom,prenom,tel,adresse,mutuelle " +
                         "from malade"
         );
 
@@ -138,7 +138,7 @@ public class Malade extends DataObject {
         numero   = resultSet.getInt("numero");
         nom      = resultSet.getString("nom");
         prenom   = resultSet.getString("prenom");
-        telephone = resultSet.getString("telephone");
+        telephone = resultSet.getString("tel");
         adresse  = resultSet.getString("adresse");
         mutuelle = resultSet.getString("mutuelle");
     }
@@ -159,7 +159,7 @@ public class Malade extends DataObject {
     public LinkedList<Docteur> getDocteurs(Connexion connexion) throws SQLException {
         // Requete
         PreparedStatement requete = connexion.prepRequete(
-                "select employe.numero,nom,prenom,adresse,telephone,specialite " +
+                "select employe.numero,nom,prenom,adresse,tel,specialite " +
                         "from soigne " +
                             "inner join docteur on no_docteur=numero " +
                             "inner join employe on employe.numero = docteur.numero " +
@@ -219,7 +219,7 @@ public class Malade extends DataObject {
         // Requête
         PreparedStatement requete = connexion.prepRequete(
                 "update malade " +
-                        "set nom=?, prenom=?, adresse=?, telephone=?, mutuelle=? " +
+                        "set nom=?, prenom=?, adresse=?, tel=?, mutuelle=? " +
                         "where numero = ?"
         );
 
